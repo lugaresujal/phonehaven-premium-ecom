@@ -1,0 +1,467 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String?
+  name             String?
+  phone            String?
+  googleId         String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  status           String    @default("Active")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  orders    Order[]
+  addresses Address[]
+  reviews   Review[]
+}
+
+// ============================================
+// ADDRESS MODEL
+// ============================================
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName  String
+  phone     String
+  email     String
+  line1     String
+  line2     String?
+  city      String
+  pincode   String
+  state     String
+  createdAt DateTime @default(now())
+  
+  orders    Order[]
+}
+
+// ============================================
+// ORDER MODEL
+// ============================================
+model Order {
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime @default(now())
+  status      String   @default("Processing")
+  cancellationReason String?
+  subtotal    Float
+  gstIncluded Float
+  shipping    Float
+  total       Float
+  tax         Float?
+  
+  deliveryLabel String
+  deliveryFee   Float
+  
+  paymentMethod String
+  paymentMode   String
+  paymentStatus String
+  
+  addressId   String
+  address     Address @relation(fields: [addressId], references: [id])
+  
+  items       OrderItem[]
+  returns     Return[]
+  repairs     Repair[]
+  exchanges   Exchange[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// ORDER ITEM MODEL
+// ============================================
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  name      String
+  brand     String
+  image     String
+  price     Float
+  qty       Int
+  color     String?
+  storage   String?
+}
+
+// ============================================
+// BRAND MODEL
+// ============================================
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  tagline     String?
+  logo        String?
+  description String?
+  status      String    @default("Active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+// ============================================
+// CATEGORY MODEL
+// ============================================
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  image       String?
+  icon        String?
+  status      String    @default("Active")
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+// ============================================
+// PRODUCT MODEL
+// ============================================
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  brandId     String?
+  brand       Brand?   @relation(fields: [brandId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  description String?
+  price       Float
+  mrp         Float
+  sku         String?  @unique
+  stock       Int      @default(0)
+  image       String?
+  images      String[] @default([])
+  colors      String[] @default([])
+  storage     String[] @default([])
+  ram         String?
+  type        String?
+  status      String   @default("Active")
+  featured    Boolean  @default(false)
+  badge       String?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  highlights  String[] @default([])
+  tags        String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reviews     Review[]
+  inventoryLogs InventoryLog[]
+}
+
+// ============================================
+// INVENTORY LOG MODEL
+// ============================================
+model InventoryLog {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  change     Int
+  reason     String?
+  staffNote  String?
+  createdAt  DateTime @default(now())
+}
+
+// ============================================
+// OFFER MODEL
+// ============================================
+model Offer {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  discountType  String   @default("percentage")
+  discountValue Float
+  minOrderValue Float?
+  maxDiscount   Float?
+  startDate     DateTime?
+  endDate       DateTime?
+  status        String   @default("Active")
+  applicableTo  String   @default("all")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ============================================
+// COUPON MODEL
+// ============================================
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  discountType  String   @default("percentage")
+  discountValue Float
+  minOrder      Float?
+  maxDiscount   Float?
+  usageLimit    Int?
+  perUserLimit  Int?
+  usedCount     Int      @default(0)
+  startDate     DateTime?
+  expiryDate    DateTime?
+  status        String   @default("Active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ============================================
+// BANNER MODEL
+// ============================================
+model Banner {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  image       String?
+  buttonText  String?
+  link        String?
+  startDate   DateTime?
+  endDate     DateTime?
+  sortOrder   Int      @default(0)
+  status      String   @default("Active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// BLOG POST MODEL
+// ============================================
+model BlogPost {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  content      String?
+  featuredImage String?
+  author       String?
+  status       String   @default("Draft")
+  publishDate  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ============================================
+// FAQ MODEL
+// ============================================
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String?
+  sortOrder Int      @default(0)
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// REVIEW MODEL
+// ============================================
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  customerName String?
+  rating    Int
+  title     String?
+  body      String?
+  status    String   @default("Pending")
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// RETURN MODEL
+// ============================================
+model Return {
+  id           String   @id @default(cuid())
+  returnId     String   @unique @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id])
+  userId       String?
+  customerName String
+  customerEmail String?
+  productName  String
+  reason       String
+  description  String?
+  status       String   @default("Requested")
+  refundStatus String   @default("Pending")
+  refundAmount Float?
+  adminNotes   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ============================================
+// REPAIR MODEL
+// ============================================
+model Repair {
+  id            String   @id @default(cuid())
+  repairId      String   @unique @default(cuid())
+  orderId       String?
+  order         Order?   @relation(fields: [orderId], references: [id])
+  customerName  String
+  customerEmail String?
+  customerPhone String?
+  deviceName    String
+  issue         String
+  description   String?
+  estimatedCost Float?
+  finalCost     Float?
+  technician    String?
+  status        String   @default("Requested")
+  adminNotes    String?
+  acceptanceEmailSent Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ============================================
+// EXCHANGE MODEL
+// ============================================
+model Exchange {
+  id                 String   @id @default(cuid())
+  exchangeId         String   @unique @default(cuid())
+  orderId            String?
+  order              Order?   @relation(fields: [orderId], references: [id])
+  customerName       String
+  customerEmail      String?
+  productName        String
+  reason             String
+  requestedReplacement String?
+  status             String   @default("Requested")
+  adminNotes         String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// ============================================
+// STORE MODEL
+// ============================================
+model Store {
+  id           String   @id @default(cuid())
+  name         String
+  address      String
+  city         String
+  state        String
+  pincode      String
+  phone        String?
+  email        String?
+  openingHours String?
+  closingHours String?
+  mapLink      String?
+  status       String   @default("Active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ============================================
+// ENQUIRY MODEL (Contact Form Messages)
+// ============================================
+model Enquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("New")
+  adminNotes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// CORPORATE ENQUIRY MODEL
+// ============================================
+model CorporateEnquiry {
+  id            String   @id @default(cuid())
+  companyName   String
+  contactPerson String
+  email         String
+  phone         String?
+  requirement   String?
+  message       String?
+  status        String   @default("New")
+  adminNotes    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ============================================
+// STAFF MODEL
+// ============================================
+model Staff {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  role      String   @default("Staff")
+  password  String
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activityLogs ActivityLog[]
+}
+
+// ============================================
+// ACTIVITY LOG MODEL
+// ============================================
+model ActivityLog {
+  id          String   @id @default(cuid())
+  staffId     String?
+  staff       Staff?   @relation(fields: [staffId], references: [id])
+  staffName   String?
+  action      String
+  module      String
+  recordId    String?
+  description String
+  createdAt   DateTime @default(now())
+}
+
+// ============================================
+// SETTINGS MODEL
+// ============================================
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// NOTIFICATION MODEL
+// ============================================
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   @default("info")
+  module    String?
+  recordId  String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
