@@ -12,8 +12,7 @@ export function Logo({ size = 80, showText = true }: { size?: number; showText?:
         alt="House of Phones"
         width={size}
         height={size}
-        className="object-contain transition-transform group-hover:scale-105"
-        style={{ width: size, height: size }}
+        className="w-[45px] h-[45px] md:w-[55px] md:h-[55px] lg:w-[70px] lg:h-[70px] object-contain transition-transform group-hover:scale-105"
       />
       {/* Text wapas add karo (agar showText true hai) */}
       {showText && (

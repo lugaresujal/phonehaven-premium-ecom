@@ -126,7 +126,7 @@ function Checkout() {
 
   return (
     <PageLayout title="" crumbs={[]}>
-  <div className="relative w-full h-[180px] sm:h-[230px] md:h-[300px] lg:h-[320px] overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[156px]">
+  <div className="relative w-full inner-banner md:h-[300px] lg:h-[320px] overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[156px]">
     
     {/* Background Banner */}
     <img
@@ -169,13 +169,13 @@ function Checkout() {
   </div>
 
 
-      <section className="container-hop py-10 grid lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-10">
+      <section className="container-hop py-6 md:py-10 grid lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-6 md:gap-10">
         <div className="space-y-8">
           <Card title="1. Shipping Address">
             <div className="grid md:grid-cols-2 gap-4">
               <Field label="Full Name" placeholder="Rohan Kulkarni" value={form.fullName} onChange={set("fullName")} />
-              <Field label="Phone" placeholder="+91 98765 43210" value={form.phone} onChange={set("phone")} />
-              <Field label="Email" placeholder="you@example.com" full value={form.email} onChange={set("email")} />
+              <Field label="Phone" placeholder="+91 98765 43210" type="tel" value={form.phone} onChange={set("phone")} />
+              <Field label="Email" placeholder="you@example.com" type="email" full value={form.email} onChange={set("email")} />
               <Field label="Address Line" placeholder="Flat / House / Building" full value={form.line1} onChange={set("line1")} />
               <Field label="City" placeholder="Pune" value={form.city} onChange={set("city")} />
               <Field label="Pincode" placeholder="411037" value={form.pincode} onChange={set("pincode")} />
@@ -244,7 +244,7 @@ function Checkout() {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatINR(totals.subtotal)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span>{totals.shipping === 0 ? "Free" : formatINR(totals.shipping)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">GST</span><span>Included ({formatINR(totals.gstIncluded)})</span></div>
+            <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">GST</span><span className="text-right text-xs sm:text-sm">Included ({formatINR(totals.gstIncluded)})</span></div>
           </div>
           <div className="border-t border-border my-4" />
           <div className="flex justify-between items-baseline"><span className="font-medium">Total</span><span className="font-serif text-2xl">{formatINR(totals.total)}</span></div>
@@ -281,7 +281,7 @@ function Checkout() {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card border border-border rounded-2xl p-6">
+    <div className="bg-card border border-border rounded-2xl p-4 md:p-6">
       <p className="font-serif text-lg mb-5">{title}</p>
       {children}
     </div>
@@ -294,17 +294,20 @@ function Field({
   full,
   value,
   onChange,
+  type = "text",
 }: {
   label: string;
   placeholder?: string;
   full?: boolean;
   value: string;
   onChange: (v: string) => void;
+  type?: string;
 }) {
   return (
     <div className={full ? "md:col-span-2" : ""}>
       <label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">{label}</label>
       <input
+        type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

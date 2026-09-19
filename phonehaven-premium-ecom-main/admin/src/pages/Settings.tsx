@@ -221,7 +221,7 @@ export function Settings() {
             <div className="settings-grid">
               <div className="settings-card settings-card-main">
                 <div className="settings-section">
-                  <h3>General Settings</h3>
+                  <h2>General Settings</h2>
                   <p>Configure your store details and basic information.</p>
                   <div className="settings-form">
                     <div className="settings-form-group">

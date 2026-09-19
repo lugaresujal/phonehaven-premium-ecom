@@ -117,6 +117,11 @@
   to { transform: translateX(-50%); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @utility marquee {
   animation: hopMarquee 40s linear infinite;
 }
@@ -157,17 +162,27 @@
 }
 
 /* Global mobile fixes */
-html, body {
-  overflow-x: hidden;
-}
 
 @media (max-width: 767px) {
-  img {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  img:not(.banner-sharp) {
     max-width: 100%;
     height: auto;
   }
 
-  input, textarea, select, button {
+  input, textarea, select {
     font-size: 16px;
+  }
+
+  .inner-banner {
+    height: 260px !important;
+    aspect-ratio: auto !important;
+  }
+
+  .inner-banner img {
+    height: 100% !important;
   }
 }

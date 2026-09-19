@@ -59,6 +59,9 @@ export const productsAPI = {
   create: (data: Record<string, unknown>) => apiCall("/products", { method: "POST", body: JSON.stringify(data) }),
   update: (id: string, data: Record<string, unknown>) => apiCall(`/products/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   delete: (id: string) => apiCall(`/products/${id}`, { method: "DELETE" }),
+  getColorVariants: (id: string) => apiCall(`/products/${id}/color-variants`),
+  saveColorVariants: (id: string, variants: Array<{ colorName: string; colorCode?: string; images: string[]; stock: number }>) =>
+    apiCall(`/products/${id}/color-variants`, { method: "PUT", body: JSON.stringify({ variants }) }),
 };
 
 export const inventoryAPI = {

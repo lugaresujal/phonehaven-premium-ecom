@@ -149,6 +149,8 @@ model Product {
   categoryId  String?
   category    Category? @relation(fields: [categoryId], references: [id])
   description String?
+  shortDescription String?
+  variants    Json?    @default("[]")
   price       Float
   mrp         Float
   sku         String?  @unique
@@ -171,6 +173,25 @@ model Product {
 
   reviews     Review[]
   inventoryLogs InventoryLog[]
+  colorVariants ColorVariant[]
+}
+
+// ============================================
+// COLOR VARIANT MODEL
+// ============================================
+model ColorVariant {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  colorName String
+  colorCode String?
+  images    String[] @default([])
+  stock     Int      @default(0)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, colorName])
 }
 
 // ============================================
@@ -286,6 +307,7 @@ model Review {
   rating    Int
   title     String?
   body      String?
+  images    String[] @default([])
   status    String   @default("Pending")
   featured  Boolean  @default(false)
   createdAt DateTime @default(now())

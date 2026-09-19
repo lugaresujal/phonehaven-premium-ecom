@@ -11,17 +11,20 @@ export type CartLine = {
   qty: number;
   color?: string;
   storage?: string;
+  ram?: string;
+  price?: number;
+  mrp?: number;
 };
 
 export type CartItem = CartLine & { product: Product };
 
-export const MAX_QTY_PER_LINE = 5;
+export const MAX_QTY_PER_LINE = 100;
 
 const guestKey = "hop_cart_guest";
 const cartKey = (userId?: string | null) => (userId ? `hop_cart_${userId}` : guestKey);
 
-export const lineKey = (id: string, color?: string, storage?: string) =>
-  [id, color ?? "-", storage ?? "-"].join("|");
+export const lineKey = (id: string, color?: string, storage?: string, ram?: string) =>
+  [id, color ?? "-", storage ?? "-", ram ?? "-"].join("|");
 
 function hydrate(lines: CartLine[]): CartItem[] {
   return lines
@@ -38,6 +41,9 @@ type AddInput = {
   qty?: number;
   color?: string;
   storage?: string;
+  ram?: string;
+  price?: number;
+  mrp?: number;
 };
 
 type CartContextValue = {
@@ -51,7 +57,7 @@ type CartContextValue = {
   decrement: (key: string) => void;
   remove: (key: string) => void;
   clear: () => void;
-  hasLine: (id: string, color?: string, storage?: string) => boolean;
+  hasLine: (id: string, color?: string, storage?: string, ram?: string) => boolean;
 };
 
 const CartContext = React.createContext<CartContextValue | null>(null);
@@ -96,12 +102,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const items = React.useMemo(() => hydrate(lines), [lines]);
 
   const add = React.useCallback<CartContextValue["add"]>(
-    ({ product, qty = 1, color, storage }) => {
+    ({ product, qty = 1, color, storage, ram, price, mrp }) => {
       if (product.stock <= 0) {
         toast.error("This product is currently out of stock.");
         return false;
       }
-      const key = lineKey(product.id, color, storage);
+      const key = lineKey(product.id, color, storage, ram);
       let ok = true;
       setLines((prev) => {
         const existing = prev.find((l) => l.key === key);
@@ -115,8 +121,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
         // Duplicate products are merged into a single line instead of duplicated.
         const next = existing
-          ? prev.map((l) => (l.key === key ? { ...l, qty: nextQty } : l))
-          : [...prev, { key, id: product.id, qty: nextQty, color, storage }];
+          ? prev.map((l) => (l.key === key ? { ...l, qty: nextQty, price: price ?? l.price, mrp: mrp ?? l.mrp } : l))
+          : [...prev, { key, id: product.id, qty: nextQty, color, storage, ram, price, mrp }];
         return persist(next);
       });
       return ok;
@@ -163,12 +169,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clear = React.useCallback(() => setLines(() => persist([])), [persist]);
 
   const hasLine = React.useCallback(
-    (id: string, color?: string, storage?: string) => lines.some((l) => l.key === lineKey(id, color, storage)),
+    (id: string, color?: string, storage?: string, ram?: string) => lines.some((l) => l.key === lineKey(id, color, storage, ram)),
     [lines],
   );
 
   const count = items.reduce((s, i) => s + i.qty, 0);
-  const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+  const subtotal = items.reduce((s, i) => s + (i.price ?? i.product.price) * i.qty, 0);
 
   const value = React.useMemo(
     () => ({ items, loading, count, subtotal, add, setQty, increment, decrement, remove, clear, hasLine }),

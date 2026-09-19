@@ -64,7 +64,7 @@ function PolicyView({ k }: { k: PolicyKey }) {
   return (
     <PageLayout bare>
       {/* Hero Banner */}
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img
           src={innerBanner}
           alt={p.t}
@@ -125,7 +125,7 @@ function RefundPolicyView() {
   return (
     <PageLayout bare>
       {/* Hero Banner — unchanged */}
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Returns & Refunds" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">
@@ -154,7 +154,7 @@ function RefundPolicyView() {
       {/* 7-Day Return Policy Highlight */}
       <section className="container-hop py-10">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 border border-primary/10 p-8 md:p-12">
-          <div className="absolute top-4 right-4 md:top-8 md:right-8 opacity-10">
+          <div className="absolute top-4 right-4 md:top-8 md:right-8 opacity-[0.04]">
             <ShieldCheck size={120} className="text-primary" />
           </div>
           <div className="relative z-10 max-w-2xl">
@@ -234,12 +234,12 @@ function RefundPolicyView() {
         <div className="max-w-3xl">
           <div className="flex items-center gap-3 mb-6">
             <span className="inline-block w-10 h-0.5 bg-primary" />
-            <span className="text-xs tracking-[0.35em] uppercase text-primary font-medium">Refund Information</span>
+            <span className="text-xs tracking-wider text-primary font-medium">Refund Information</span>
           </div>
           <h2 className="font-serif text-2xl md:text-3xl mb-6">Refund Details</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-card border border-border rounded-xl p-6">
-              <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-600 grid place-items-center mb-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary grid place-items-center mb-3">
                 <CreditCard size={20} />
               </div>
               <h3 className="font-medium mb-2">Refund Method</h3>
@@ -248,7 +248,7 @@ function RefundPolicyView() {
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6">
-              <div className="w-10 h-10 rounded-full bg-green-500/10 text-green-600 grid place-items-center mb-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary grid place-items-center mb-3">
                 <Clock size={20} />
               </div>
               <h3 className="font-medium mb-2">Refund Timeline</h3>
@@ -275,19 +275,19 @@ function RefundPolicyView() {
                 <p className="font-medium text-amber-700 mb-3">The following items are generally not eligible for return:</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <span className="text-amber-500 mt-1">•</span>
+                    <span className="text-amber-600 mt-1">•</span>
                     Opened accessories (cases, screen guards, chargers, cables, etc.)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-amber-500 mt-1">•</span>
+                    <span className="text-amber-600 mt-1">•</span>
                     Personalized or custom-configured items
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-amber-500 mt-1">•</span>
+                    <span className="text-amber-600 mt-1">•</span>
                     Items returned after the 7-day return period
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-amber-500 mt-1">•</span>
+                    <span className="text-amber-600 mt-1">•</span>
                     Products that do not meet the return condition requirements
                   </li>
                 </ul>
@@ -327,7 +327,7 @@ function RefundPolicyView() {
                 href="https://wa.me/919637671118"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-green-500/10 text-green-600 px-5 py-2.5 rounded-full text-sm font-medium hover:bg-green-500/20 transition-colors"
+                className="inline-flex items-center gap-2 bg-[#25D366]/10 text-[#25D366] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#25D366]/20 transition-colors"
               >
                 <MessageCircle size={16} />
                 Chat on WhatsApp
@@ -427,7 +427,7 @@ function WarrantyPolicyView() {
   return (
     <PageLayout bare>
       {/* Hero Banner — unchanged */}
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Warranty Policy" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">
@@ -620,16 +620,16 @@ function ShippingPolicyView() {
       title: "Delivery Areas",
       desc: "We deliver across India via trusted courier partners.",
       icon: Globe,
-      color: "text-blue-600",
-      bg: "bg-blue-500/10",
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
     {
       num: "02",
       title: "Delivery Timelines",
       desc: null,
       icon: Clock,
-      color: "text-green-600",
-      bg: "bg-green-500/10",
+      color: "text-primary",
+      bg: "bg-primary/10",
       details: [
         { label: "Standard", value: "2–4 business days" },
         { label: "Express", value: "Next business day" },
@@ -641,8 +641,8 @@ function ShippingPolicyView() {
       title: "Shipping Charges",
       desc: null,
       icon: CreditCard,
-      color: "text-orange-600",
-      bg: "bg-orange-500/10",
+      color: "text-primary",
+      bg: "bg-primary/10",
       details: [
         { label: "Standard Shipping", value: "Free on orders above ₹499" },
         { label: "Express Shipping", value: "₹149" },
@@ -652,16 +652,16 @@ function ShippingPolicyView() {
       num: "04",
       title: "Order Tracking",
       desc: "You'll receive tracking details by SMS and email as soon as your order ships.",
-      icon: Search,
-      color: "text-purple-600",
-      bg: "bg-purple-500/10",
+      icon: Package,
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
   ];
 
   return (
     <PageLayout bare>
       {/* Hero Banner — unchanged */}
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Shipping Policy" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">
@@ -711,7 +711,7 @@ function ShippingPolicyView() {
         <div className="max-w-3xl">
           <div className="flex items-center gap-3 mb-6">
             <span className="inline-block w-10 h-0.5 bg-primary" />
-            <span className="text-xs tracking-[0.35em] uppercase text-primary font-medium">Shipping Details</span>
+            <span className="text-xs tracking-wider text-primary font-medium">Shipping Details</span>
           </div>
           <h2 className="font-serif text-2xl md:text-3xl mb-8">Your Shipping at a Glance</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -727,17 +727,17 @@ function ShippingPolicyView() {
                     <card.icon size={22} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">{card.num}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{card.num}</span>
                     <h3 className="font-medium mt-0.5">{card.title}</h3>
                     {card.desc && (
                       <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{card.desc}</p>
                     )}
                     {card.details && (
-                      <div className="mt-2 space-y-1.5">
+                      <div className="mt-3 space-y-2">
                         {card.details.map((d) => (
                           <div key={d.label} className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">{d.label}</span>
-                            <span className={`font-medium ${d.label === "Standard Shipping" ? "text-green-600" : d.label === "Express Shipping" ? "text-orange-600" : "text-foreground"}`}>
+                            <span className="font-medium text-foreground">
                               {d.value}
                             </span>
                           </div>
@@ -783,9 +783,9 @@ function ShippingPolicyView() {
                 </a>
               </div>
               <div className="flex flex-col gap-3 md:min-w-[200px]">
-                <div className="bg-green-500/10 text-green-700 rounded-xl p-4 text-center">
-                  <p className="text-sm font-medium">Store Pickup</p>
-                  <p className="text-xs text-green-600/80 mt-1">Free · Ready in 2 hours</p>
+                <div className="bg-muted rounded-xl p-4 text-center border border-border">
+                  <p className="text-sm font-medium text-foreground">Store Pickup</p>
+                  <p className="text-xs text-muted-foreground mt-1">Free · Ready in 2 hours</p>
                 </div>
               </div>
             </div>
@@ -833,7 +833,7 @@ function ShippingPolicyView() {
                   to="/track-order"
                   className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
-                  <Search size={16} />
+                  <Package size={16} />
                   Track Your Order
                 </Link>
               </div>
@@ -851,7 +851,7 @@ function ShippingPolicyView() {
             </div>
             <div className="relative z-10">
               <h2 className="font-serif text-2xl md:text-3xl mb-3">Questions About Shipping?</h2>
-              <p className="text-background/70 mb-6 max-w-lg">
+              <p className="text-background/70 mb-4 max-w-lg">
                 Our support team is here to help with any shipping queries. Reach out through any of the channels below.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -897,7 +897,7 @@ function PrivacyPolicyView() {
   return (
     <PageLayout bare>
       {/* Hero Banner */}
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Privacy Policy" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">
@@ -1133,7 +1133,7 @@ function TermsPolicyView() {
   return (
     <PageLayout bare>
       {/* Hero Banner */}
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Terms & Conditions" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">

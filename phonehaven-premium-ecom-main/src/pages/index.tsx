@@ -1,14 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, BadgeCheck, Truck, RotateCcw, Sparkles, Zap, Star, Quote, ChevronLeft, ChevronRight, Battery, Wifi, Smartphone, Clock, TrendingUp, Award, Headphones, Watch, Camera, Laptop, Gamepad2, Heart } from "lucide-react";
+import { ArrowRight, ShieldCheck, BadgeCheck, Truck, RotateCcw, Sparkles, Zap, Star, Quote, ChevronLeft, ChevronRight, Battery, Wifi, Smartphone, Clock, TrendingUp, Award, Headphones, Watch, Camera, Laptop, Gamepad2 } from "lucide-react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ProductCard } from "@/components/ProductCard";
-import { brands, categories, formatINR } from "@/lib/mock-data";
+import { brands, categories } from "@/lib/mock-data";
 import { useProducts } from "@/lib/products-store";
 import { useCms } from "@/lib/cms-store";
-import { useCart } from "@/lib/store/cart";
-import { useWishlist } from "@/lib/store/wishlist";
-import { useProtectedAction } from "@/lib/store/protected";
-import { toast } from "sonner";
 import { useState, useEffect, useRef } from "react";
 import samsungs24BgImg from "@/assets/images/samsungs24-bg-img.png";
 import iphone17ProMaxBgImg from "@/assets/images/iphone17promax-bg-img.png";
@@ -54,24 +50,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { add: addToCart } = useCart();
-  const wishlist = useWishlist();
-  const guard = useProtectedAction();
-
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      body, html {
-        overflow-x: hidden !important;
-        max-width: 100vw !important;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -417,8 +395,8 @@ function Home() {
   return (
     <PageLayout bare>
       {/* Full Screen Hero with Slider */}
-      <section className="relative h-[81vh] md:h-screen p-4 md:p-6 lg:p-8">
-        <div className="relative w-full h-full overflow-hidden rounded-3xl">
+      <section className="relative h-[65vh] md:h-screen p-2.5 md:p-6 lg:p-8">
+        <div className="relative w-full h-full overflow-hidden rounded-xl md:rounded-3xl">
           {slides.map((slide, index) => (
             <div
               key={index}
@@ -451,7 +429,7 @@ function Home() {
                     <p className="text-xs tracking-[0.35em] uppercase text-primary-light mb-4 flex items-center gap-2">
                       <span className="inline-block w-8 h-px bg-primary-light" /> New Arrival
                     </p>
-                    <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
+                    <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl leading-[1.05]">
                       {slide.title}
                     </h1>
                     <p className="mt-4 font-serif text-xl md:text-2xl text-white/90">
@@ -460,16 +438,16 @@ function Home() {
                     <p className="mt-5 text-sm md:text-base text-white/80 max-w-md">
                       {slide.description}
                     </p>
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className="mt-6 md:mt-8 flex flex-wrap gap-3">
                       <Link
                         to={slide.link}
-                        className="inline-flex items-center gap-2 bg-white text-black px-7 py-3.5 rounded-full text-sm tracking-widest uppercase hover:bg-primary-light hover:text-white transition-colors"
+                        className="inline-flex items-center gap-2 bg-white text-black px-5 md:px-7 py-3 md:py-3.5 rounded-full text-xs md:text-sm tracking-widest uppercase hover:bg-primary-light hover:text-white transition-colors"
                       >
                         {slide.cta} <ArrowRight size={16} />
                       </Link>
                       <Link
                         to="/shop"
-                        className="inline-flex items-center gap-2 border border-white/50 text-white px-7 py-3.5 rounded-full text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-colors"
+                        className="inline-flex items-center gap-2 border border-white/50 text-white px-5 md:px-7 py-3 md:py-3.5 rounded-full text-xs md:text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-colors"
                       >
                         Explore All
                       </Link>
@@ -481,36 +459,38 @@ function Home() {
           ))}
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-4">
+        <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 md:gap-4">
           <button
             onClick={prevSlide}
-            className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors flex items-center justify-center text-white border border-white/30"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors flex items-center justify-center text-white border border-white/30"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={16} className="md:hidden" />
+            <ChevronLeft size={20} className="hidden md:block" />
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 md:gap-2">
             {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${index === currentSlide
-                    ? "w-8 bg-white"
-                    : "w-4 bg-white/50 hover:bg-white/80"
+                    ? "w-6 md:w-8 bg-white"
+                    : "w-3 md:w-4 bg-white/50 hover:bg-white/80"
                   }`}
               />
             ))}
           </div>
           <button
             onClick={nextSlide}
-            className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors flex items-center justify-center text-white border border-white/30"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors flex items-center justify-center text-white border border-white/30"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={16} className="md:hidden" />
+            <ChevronRight size={20} className="hidden md:block" />
           </button>
         </div>
       </section>
 
       {/* USP Strip */}
-      <section className="container-hop mt-8 relative z-10 -mt-16">
+      <section className="container-hop mt-8 relative z-10">
         <div className="glass-card rounded-2xl grid grid-cols-2 md:grid-cols-4 divide-x divide-border/60 bg-white/95 backdrop-blur-sm shadow-xl">
           {[
             { icon: ShieldCheck, title: "100% Original", sub: "Sourced directly from brands" },
@@ -535,7 +515,7 @@ function Home() {
       {/* Categories Section - AUTO SLIDER VERSION */}
       {/* Categories Section - AUTO SLIDER VERSION */}
       <section className="container-hop mt-24">
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <div className="absolute -top-20 -right-20 w-[200px] h-[200px] bg-primary/5 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-20 -left-20 w-[200px] h-[200px] bg-purple-400/5 rounded-full blur-3xl"></div>
@@ -644,7 +624,7 @@ function Home() {
           </div>
 
           {/* Arrows and Explore All Categories Button */}
-          <div className="relative flex items-center justify-center gap-4 mt-8">
+          <div className="relative flex items-center justify-center gap-3 md:gap-4 mt-6 md:mt-8">
             <button
               onClick={() => {
                 const container = document.getElementById('category-slider');
@@ -654,18 +634,18 @@ function Home() {
                   container.scrollLeft -= (cardWidth + gap) * 2; // 2 cards jump
                 }
               }}
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 hover:scale-110 transition-all duration-300 border border-gray-200"
+              className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 hover:scale-110 transition-all duration-300 border border-gray-200"
               aria-label="Previous"
             >
-              <ChevronLeft size={24} className="text-gray-700" />
+              <ChevronLeft size={20} className="text-gray-700" />
             </button>
 
             <Link
               to="/accessories"
-              className="inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-1.5 md:py-2.5 rounded-full bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs tracking-widest uppercase hover:shadow-xl hover:shadow-primary/25 hover:scale-105 transition-all duration-300"
+              className="inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-1.5 md:py-2.5 rounded-full bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs tracking-widest uppercase hover:shadow-xl hover:shadow-primary/25 hover:scale-105 transition-all duration-300 whitespace-nowrap"
             >
-              Explore All Categories
-              <ArrowRight size={12} className="md:size-14" />
+              Explore All
+              <ArrowRight size={12} className="md:w-3.5 md:h-3.5" />
             </Link>
 
             <button
@@ -677,17 +657,17 @@ function Home() {
                   container.scrollLeft += (cardWidth + gap) * 2; // 2 cards jump
                 }
               }}
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 hover:scale-110 transition-all duration-300 border border-gray-200"
+              className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-lg hover:bg-gray-50 hover:scale-110 transition-all duration-300 border border-gray-200"
               aria-label="Next"
             >
-              <ChevronRight size={24} className="text-gray-700" />
+              <ChevronRight size={20} className="text-gray-700" />
             </button>
           </div>
         </div>
       </section>
       {/* What's Popular Section */}
       <section className="container-hop mt-24">
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <div className="absolute -top-24 -right-24 w-[500px] h-[500px] bg-gradient-to-br from-primary/5 via-purple-400/5 to-blue-400/5 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-24 -left-24 w-[500px] h-[500px] bg-gradient-to-tr from-amber-400/5 via-orange-400/5 to-primary/5 rounded-full blur-3xl"></div>
@@ -730,7 +710,7 @@ function Home() {
                 <button
                   key={tab.label}
                   onClick={() => setPopularTab(tab.label)}
-                  className={`group relative px-6 md:px-8 py-3.5 text-sm font-medium tracking-wide transition-all duration-300 flex items-center gap-2.5 rounded-t-2xl ${popularTab === tab.label
+                  className={`group relative px-4 md:px-8 py-2.5 md:py-3.5 text-xs md:text-sm font-medium tracking-wide transition-all duration-300 flex items-center gap-2 md:gap-2.5 rounded-t-2xl ${popularTab === tab.label
                       ? "text-primary bg-primary/5 border-b-2 border-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                     }`}
@@ -748,97 +728,7 @@ function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             {getPopularProducts().map((product) => (
-              <div key={product.id} className="group">
-                <Link
-                  to={`/product/${product.slug || product.id}`}
-                  className="block relative rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-accent/30 to-accent/10">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3 z-10">
-                      {popularTab === "New Arrivals" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D4A574] text-white text-[9px] font-semibold tracking-widest uppercase rounded-full shadow-md">
-                          <Sparkles size={10} />
-                          New
-                        </span>
-                      )}
-                      {popularTab === "Best Sellers" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D4A574] text-white text-[9px] font-semibold tracking-widest uppercase rounded-full shadow-md">
-                          <Award size={10} />
-                          Bestseller
-                        </span>
-                      )}
-                      {popularTab === "Trending Now" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D4A574] text-white text-[9px] font-semibold tracking-widest uppercase rounded-full shadow-md">
-                          <TrendingUp size={10} />
-                          Trending
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-4 md:p-5 flex flex-col">
-                    <h3 className="text-sm md:text-base font-semibold text-foreground line-clamp-2 min-h-[2.5rem]">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {product.category || "Accessory"}
-                    </p>
-                    <div className="flex items-center justify-between mt-3">
-                      <div className="flex flex-col">
-                        <span className="text-lg md:text-xl font-serif font-bold text-foreground">
-                          {formatINR(product.price)}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-xs text-muted-foreground line-through">
-                            {formatINR(product.originalPrice)}
-                          </span>
-                        )}
-                      </div>
-                      {product.rating && (
-                        <div className="flex items-center gap-1 bg-gray-100 px-2.5 py-1 rounded-full">
-                          <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                          <span className="text-xs font-medium">{product.rating}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-4">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          guard({ type: "none" }, () => {
-                            addToCart({ product, qty: 1, color: product.colors?.[0], storage: product.storage?.[0] });
-                            toast.success(`${product.name} added to cart`);
-                          }, "Please create an account or log in first to add products to your cart.");
-                        }}
-                        className="flex-1 px-4 py-2.5 rounded-xl bg-[#D4A574] text-white text-xs font-medium tracking-widest uppercase hover:bg-[#C4956A] hover:shadow-lg transition-all duration-300"
-                      >
-                        Add to Cart
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          guard({ type: "wishlist", productId: product.id }, () => {
-                            const added = wishlist.toggle(product.id);
-                            toast.success(added ? "Added to wishlist" : "Removed from wishlist");
-                          }, "Please create an account or log in first to add products to your wishlist.");
-                        }}
-                        className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center hover:bg-white/90 hover:shadow-lg transition-all duration-300 ${
-                          wishlist.has(product.id) ? "text-red-500" : "text-foreground"
-                        }`}
-                      >
-                        <Heart size={18} fill={wishlist.has(product.id) ? "currentColor" : "none"} />
-                      </button>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
@@ -921,7 +811,7 @@ function Home() {
 
       {/* Premium Accessories Section */}
       <section className="container-hop mt-24">
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-gradient-to-br from-primary/5 via-purple-400/5 to-pink-400/5 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-32 -left-32 w-[600px] h-[600px] bg-gradient-to-tr from-blue-400/5 via-cyan-400/5 to-primary/5 rounded-full blur-3xl"></div>
@@ -957,83 +847,7 @@ function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             {featuredAcc.map((product) => (
-              <div key={product.id} className="group">
-                <Link
-                  to={`/product/${product.slug || product.id}`}
-                  className="block relative rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-gray-300 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-accent/30 to-accent/10">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="absolute top-3 left-3 z-10">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D4A574] text-white text-[9px] font-semibold tracking-widest uppercase rounded-full shadow-md">
-                        <Sparkles size={10} />
-                        Premium
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-4 md:p-5 flex flex-col">
-                    <h3 className="text-sm md:text-base font-semibold text-foreground line-clamp-2 min-h-[2.5rem]">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {product.category || "Accessory"}
-                    </p>
-                    <div className="flex items-center justify-between mt-3">
-                      <div className="flex flex-col">
-                        <span className="text-lg md:text-xl font-serif font-bold text-foreground">
-                          {formatINR(product.price)}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-xs text-muted-foreground line-through">
-                            {formatINR(product.originalPrice)}
-                          </span>
-                        )}
-                      </div>
-                      {product.rating && (
-                        <div className="flex items-center gap-1 bg-gray-100 px-2.5 py-1 rounded-full">
-                          <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                          <span className="text-xs font-medium">{product.rating}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-4">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          guard({ type: "none" }, () => {
-                            addToCart({ product, qty: 1, color: product.colors?.[0], storage: product.storage?.[0] });
-                            toast.success(`${product.name} added to cart`);
-                          }, "Please create an account or log in first to add products to your cart.");
-                        }}
-                        className="flex-1 px-4 py-2.5 rounded-xl bg-[#D4A574] text-white text-xs font-medium tracking-widest uppercase hover:bg-[#C4956A] hover:shadow-lg transition-all duration-300"
-                      >
-                        Add to Cart
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          guard({ type: "wishlist", productId: product.id }, () => {
-                            const added = wishlist.toggle(product.id);
-                            toast.success(added ? "Added to wishlist" : "Removed from wishlist");
-                          }, "Please create an account or log in first to add products to your wishlist.");
-                        }}
-                        className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center hover:bg-white/90 hover:shadow-lg transition-all duration-300 ${
-                          wishlist.has(product.id) ? "text-red-500" : "text-foreground"
-                        }`}
-                      >
-                        <Heart size={18} fill={wishlist.has(product.id) ? "currentColor" : "none"} />
-                      </button>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
@@ -1041,7 +855,7 @@ function Home() {
             <Link
               to="/accessories"
               search={{ category: "Wireless Earbuds" }}
-              className="group relative rounded-3xl overflow-hidden p-8 md:p-10 min-h-[220px] hover:shadow-2xl hover:shadow-amber-500/30 transition-all duration-500 hover:-translate-y-1"
+              className="group relative rounded-3xl overflow-hidden p-5 md:p-10 min-h-[180px] md:min-h-[220px] hover:shadow-2xl hover:shadow-amber-500/30 transition-all duration-500 hover:-translate-y-1"
               style={{
                 backgroundImage: `url(${protectionaudiobgimg})`,
                 backgroundSize: 'cover',
@@ -1072,7 +886,7 @@ function Home() {
             <Link
               to="/accessories"
               search={{ category: "iPhone Covers" }}
-              className="group relative rounded-3xl overflow-hidden p-8 md:p-10 min-h-[220px] hover:shadow-2xl hover:shadow-stone-500/30 transition-all duration-500 hover:-translate-y-1"
+              className="group relative rounded-3xl overflow-hidden p-5 md:p-10 min-h-[180px] md:min-h-[220px] hover:shadow-2xl hover:shadow-stone-500/30 transition-all duration-500 hover:-translate-y-1"
               style={{
                 backgroundImage: `url(${deviceprotectionbgimg})`,
                 backgroundSize: 'cover',
@@ -1112,7 +926,7 @@ function Home() {
             { n: "Ananya P.", t: "Student", q: "Loved the student offer on my iPhone. Genuine product, delivered next day in Pune." },
             { n: "Vikram S.", t: "Professional", q: "The MagSafe accessories are top-notch. Feels like a proper luxury boutique." },
           ].map((r) => (
-            <div key={r.n} className="rounded-2xl border-2 border-[#D4A574] p-8 relative overflow-hidden min-h-[220px] flex flex-col justify-between bg-white">
+            <div key={r.n} className="rounded-2xl border-2 border-[#D4A574] p-5 md:p-8 relative overflow-hidden min-h-[180px] md:min-h-[220px] flex flex-col justify-between bg-white">
               <div className="relative z-10 flex flex-col h-full">
                 <Quote size={28} className="text-[#D4A574]/70 mb-3" />
                 <p className="text-gray-800 leading-relaxed flex-grow">{r.q}</p>
@@ -1133,7 +947,7 @@ function Home() {
 {/* Store info */}
       <section className="container-hop mt-4 md:mt-10 lg:mt-12"> {/* Changed from mt-24 to smaller values */}
         <div className="rounded-3xl overflow-hidden border border-border">
-          <div className="relative min-h-[350px] md:min-h-[400px] lg:min-h-[450px] flex items-center justify-center"
+          <div className="relative min-h-[250px] md:min-h-[400px] lg:min-h-[450px] flex items-center justify-center"
             style={{
               backgroundImage: `url(${visitbanner})`,
               backgroundSize: 'cover',
@@ -1157,7 +971,7 @@ function Home() {
                   </p>
                   <p className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                     <span className="text-[#94A3B8] font-medium text-[10px] sm:text-xs">Phone:</span>
-                    <span className="text-[11px] sm:text-sm">+91 98765 43210</span>
+                    <span className="text-[11px] sm:text-sm">+91 9637671118</span>
                   </p>
                   <p className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                     <span className="text-[#94A3B8] font-medium text-[10px] sm:text-xs">Email:</span>
@@ -1165,7 +979,7 @@ function Home() {
                   </p>
                   <p className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                     <span className="text-[#94A3B8] font-medium text-[10px] sm:text-xs">WhatsApp:</span>
-                    <span className="text-[11px] sm:text-sm">Chat with us on +91 98765 43210</span>
+                    <span className="text-[11px] sm:text-sm">Chat with us on +91 9637671118</span>
                   </p>
                 </div>
                 <Link to="/contact#map" viewTransition

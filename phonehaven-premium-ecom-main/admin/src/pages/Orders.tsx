@@ -324,34 +324,13 @@ export function Orders() {
 
       {/* Error Banner */}
       {error && (
-        <div
-          style={{
-            padding: "14px 18px",
-            marginBottom: "18px",
-            backgroundColor: "#fee2e2",
-            border: "1px solid #f87171",
-            borderRadius: "8px",
-            color: "#991b1b",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className="error-banner">
           <div>
             <strong>Error loading orders:</strong> {error}
           </div>
           <button
             onClick={fetchOrders}
-            style={{
-              padding: "6px 12px",
-              background: "#dc2626",
-              color: "#fff",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "12px",
-              fontWeight: "600",
-            }}
+            className="error-retry-btn"
           >
             Retry
           </button>
@@ -400,9 +379,9 @@ export function Orders() {
       {/* Conditional Rendering: Table OR Empty State */}
       <div className="orders-card">
         {loading && orders.length === 0 ? (
-          <div style={{ padding: "60px 20px", textAlign: "center", color: "#666" }}>
-            <RefreshCw size={28} style={{ animation: "spin 1s linear infinite", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: "15px", fontWeight: "500" }}>Loading orders from PostgreSQL database...</p>
+          <div className="orders-loading">
+            <RefreshCw size={28} className="spin" />
+            <p>Loading orders from PostgreSQL database...</p>
           </div>
         ) : filteredOrders.length > 0 ? (
           // ✅ TABLE MODE
@@ -433,7 +412,7 @@ export function Orders() {
                       <div>
                         <strong>{order.address?.fullName || "Customer"}</strong>
                         {order.address?.city && (
-                          <div style={{ fontSize: "12px", color: "#888" }}>
+                          <div className="text-muted" style={{ fontSize: "12px" }}>
                             {order.address.city}, {order.address.state}
                           </div>
                         )}
@@ -442,10 +421,6 @@ export function Orders() {
                     <td className="order-amount">{formatCurrency(order.total)}</td>
                     <td>
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
-                        <span className={`order-status ${getStatusClass(order.status)}`}>
-                          {getStatusIcon(order.status)}
-                          {order.status}
-                        </span>
                         {getOrderReturn(order.id) && (
                           <span style={{
                             display: "inline-flex",
@@ -456,7 +431,7 @@ export function Orders() {
                             fontWeight: "600",
                             borderRadius: "4px",
                             background: getOrderReturn(order.id).status === "Approved" || getOrderReturn(order.id).status === "Completed" ? "#dcfce7" : getOrderReturn(order.id).status === "Rejected" ? "#fee2e2" : "#fef3c7",
-                            color: getOrderReturn(order.id).status === "Approved" || getOrderReturn(order.id).status === "Completed" ? "#166534" : getOrderReturn(order.id).status === "Rejected" ? "#991b1b" : "#92400e",
+                            color: getOrderReturn(order.id).status === "Approved" || getOrderReturn(order.id).status === "Completed" ? "#065f46" : getOrderReturn(order.id).status === "Rejected" ? "#991b1b" : "#92400e",
                           }}>
                             <RotateCcw size={11} />
                             Return: {getOrderReturn(order.id).status}
@@ -479,19 +454,11 @@ export function Orders() {
                           </span>
                         )}
                         <select
+                            className={`order-status-select ${getStatusClass(order.status)}`}
                             value={order.status}
                             disabled={isUpdating}
                             onChange={(e) => handleUpdateStatus(order.orderId || order.id, e.target.value)}
-                            style={{
-                              fontSize: "11px",
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              border: "1px solid #d1d5db",
-                              background: "#f9fafb",
-                              cursor: "pointer",
-                              color: "#374151",
-                              fontWeight: "500",
-                            }}
+                            aria-label={`Change status for order ${order.orderId || order.id}`}
                           >
                             {ORDER_STATUSES.map((st) => (
                               <option key={st} value={st}>
@@ -508,6 +475,7 @@ export function Orders() {
                         <button
                           className="order-action-btn"
                           title="View Order Details"
+                          aria-label="View Order Details"
                           onClick={() => handleViewOrder(order)}
                         >
                           <Eye size={16} />
@@ -515,6 +483,7 @@ export function Orders() {
                         <button
                           className="order-action-btn"
                           title="Cancel Order"
+                          aria-label="Delete Order"
                           onClick={() => handleCancelOrder(order.orderId || order.id)}
                           disabled={order.status === "Cancelled"}
                           style={{ opacity: order.status === "Cancelled" ? 0.4 : 1 }}

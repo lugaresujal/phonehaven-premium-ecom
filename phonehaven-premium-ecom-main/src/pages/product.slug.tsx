@@ -26,6 +26,10 @@ import { useCart, MAX_QTY_PER_LINE } from "@/lib/store/cart";
 import { useWishlist } from "@/lib/store/wishlist";
 import { useProtectedAction } from "@/lib/store/protected";
 import { useState, useEffect, useRef } from "react";
+import { RatingSummary } from "@/components/RatingSummary";
+import { ReviewForm } from "@/components/ReviewForm";
+import { ReviewList } from "@/components/ReviewList";
+import { useReviews } from "@/lib/store/reviews";
 
 export const Route = createFileRoute("/product/$slug")({
   component: ProductPage,
@@ -66,6 +70,8 @@ function ProductPage() {
   const wishlist = useWishlist();
   const guard = useProtectedAction();
   const navigate = useNavigate();
+  const { reviews, fetchReviews } = useReviews();
+  const [reviewRefreshKey, setReviewRefreshKey] = useState(0);
 
   const userSelectedImg = useRef(false);
   const prevProductId = useRef<string | number | undefined>(undefined);
@@ -76,13 +82,28 @@ function ProductPage() {
       if (prevProductId.current !== product.id) {
         prevProductId.current = product.id;
         userSelectedImg.current = false;
-        setColor(product.colors?.[0]);
+        const firstColor = product.colors?.[0];
+        setColor(firstColor);
         setStorage(product.storage?.[0]);
-        setImg(product.image || product.images?.[0] || "");
+        const firstColorVariant = firstColor
+          ? product.colorVariants?.find((cv) => cv.colorName === firstColor)
+          : undefined;
+        if (firstColorVariant && firstColorVariant.images.length > 0) {
+          setImg(firstColorVariant.images[0]);
+        } else {
+          setImg(product.image || product.images?.[0] || "");
+        }
       }
       setQty(1);
     }
   }, [product?.id, product?.slug]);
+
+  // Fetch reviews for this product
+  useEffect(() => {
+    if (product) {
+      fetchReviews(String(product.id));
+    }
+  }, [product?.id, fetchReviews, reviewRefreshKey]);
 
   if (!product) {
     if (loading) {
@@ -148,8 +169,16 @@ function ProductPage() {
   const sameBrand = allProducts.filter((p) => p.brand?.toLowerCase() === product.brand?.toLowerCase() && p.id !== product.id);
   const related = Array.from(new Map([...sameBrand, ...sameCategory].map((p) => [p.id, p])).values()).slice(0, 4);
 
-  // Gallery images
-  const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  // Gallery images — color-specific if available, else default product images
+  const activeColorVariant = color
+    ? product.colorVariants?.find((cv) => cv.colorName === color)
+    : undefined;
+  const allImages =
+    activeColorVariant && activeColorVariant.images.length > 0
+      ? activeColorVariant.images
+      : product.images && product.images.length > 0
+        ? product.images
+        : [product.image];
 
   const handleAddToCart = () => {
     if (outOfStock || adding) return;
@@ -238,9 +267,9 @@ function ProductPage() {
 
       {/* Main Product Presentation */}
       <section className="container-hop py-6 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-12">
           {/* Left Column: Product Gallery */}
-          <div className="lg:col-span-6 space-y-4 lg:sticky lg:top-28">
+          <div className="w-full lg:w-5/12 shrink-0 space-y-4 lg:sticky lg:self-start lg:top-[120px]">
             <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-accent/40 via-card to-accent/20 border border-border/80 shadow-lg group">
               {/* Product Badges */}
               <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
@@ -282,6 +311,9 @@ function ProductPage() {
               <img
                 src={img || product.image}
                 alt={product.name}
+                width={800}
+                height={800}
+                decoding="async"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
 
@@ -294,7 +326,7 @@ function ProductPage() {
 
             {/* Thumbnail Gallery */}
             {allImages.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                 {allImages.map((image, i) => (
                   <button
                     key={i}
@@ -306,7 +338,7 @@ function ProductPage() {
                       img === image ? "border-primary ring-2 ring-primary/20 shadow-md scale-105" : "border-border/70 opacity-70 hover:opacity-100"
                     }`}
                   >
-                    <img src={image} alt={`Thumbnail ${i + 1}`} className="h-full w-full object-cover" />
+                    <img src={image} alt={`Thumbnail ${i + 1}`} width={80} height={80} decoding="async" className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -314,7 +346,7 @@ function ProductPage() {
           </div>
 
           {/* Right Column: Product Details & Purchase Actions */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="w-full lg:w-7/12 space-y-6">
             {/* Header / Brand & Rating */}
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
@@ -331,7 +363,7 @@ function ProductPage() {
               </h1>
 
               {/* Rating and Reviews */}
-              <div className="mt-3 flex items-center gap-3">
+              <div className="mt-3 flex items-center gap-2 md:gap-3 flex-wrap">
                 <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-semibold">
                   <Star size={13} className="fill-amber-500 text-amber-500" />
                   <span>{product.rating || 4.8}</span>
@@ -392,7 +424,11 @@ function ProductPage() {
                       key={c}
                       onClick={() => {
                         setColor(c);
-                        if (product.images && product.images[i]) {
+                        const cv = product.colorVariants?.find((v) => v.colorName === c);
+                        if (cv && cv.images.length > 0) {
+                          userSelectedImg.current = true;
+                          setImg(cv.images[0]);
+                        } else if (product.images && product.images[i]) {
                           userSelectedImg.current = true;
                           setImg(product.images[i]);
                         }
@@ -437,7 +473,7 @@ function ProductPage() {
             )}
 
             {/* Quantity Selector & Stock Status */}
-            <div className="flex items-center justify-between gap-4 pt-2">
+            <div className="flex items-center justify-between gap-3 md:gap-4 pt-2 flex-wrap">
               <div className="space-y-1.5">
                 <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground block">
                   Quantity
@@ -451,7 +487,26 @@ function ProductPage() {
                   >
                     <Minus size={14} />
                   </button>
-                  <span className="w-10 text-center text-sm font-semibold">{qty}</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={maxQty}
+                    value={qty}
+                    disabled={outOfStock}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") return;
+                      const n = parseInt(val, 10);
+                      if (isNaN(n)) return;
+                      setQty(Math.max(1, Math.min(maxQty, n)));
+                    }}
+                    onBlur={(e) => {
+                      const n = parseInt(e.target.value, 10);
+                      if (isNaN(n) || n < 1) setQty(1);
+                      else if (n > maxQty) setQty(maxQty);
+                    }}
+                    className="w-10 text-center text-sm font-semibold bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  />
                   <button
                     onClick={() => setQty(Math.min(maxQty, qty + 1))}
                     disabled={qty >= maxQty || outOfStock}
@@ -604,6 +659,27 @@ function ProductPage() {
                   <span className="font-medium text-foreground">Device, Cable, Quick Start Guide, Warranty Card</span>
                 </div>
               </div>
+            </div>
+
+            {/* Customer Reviews & Ratings */}
+            <div className="pt-4 space-y-5 border-t border-border/50">
+              <h3 className="text-xs uppercase tracking-wider font-semibold text-foreground">
+                Customer Reviews & Ratings
+              </h3>
+              <RatingSummary
+                productId={String(product.id)}
+                averageRating={product.rating || 0}
+                totalReviews={product.reviews || 0}
+              />
+              <ReviewForm
+                key={`form-${reviewRefreshKey}`}
+                productId={String(product.id)}
+                onReviewSubmitted={() => setReviewRefreshKey((k) => k + 1)}
+              />
+              <ReviewList
+                key={`list-${reviewRefreshKey}`}
+                productId={String(product.id)}
+              />
             </div>
           </div>
         </div>

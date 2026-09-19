@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Search, UserCircle, X, Phone, Mail, Building2, CheckCheck, LogOut, Sparkles, Menu } from "lucide-react";
+import { Bell, Search, UserCircle, X, Phone, Mail, Building2, CheckCheck, LogOut, Menu } from "lucide-react";
 import { notificationsAPI } from "../../services/cms-api";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { menuItems } from "./AdminSidebar";
-import { AskAIChat } from "../ai/AskAIChat";
 
 interface Notification {
   id: string;
@@ -21,7 +20,6 @@ interface Notification {
 export function AdminHeader() {
   const [showProfile, setShowProfile] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showAI, setShowAI] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
@@ -151,6 +149,7 @@ export function AdminHeader() {
         >
           <Menu size={20} />
         </button>
+
         <div className="admin-search" ref={searchRef}>
           <Search size={18} />
           <input
@@ -215,16 +214,6 @@ export function AdminHeader() {
       </div>
 
       <div className="admin-header-right">
-        {/* Ask AI Button */}
-        <button
-          type="button"
-          className="admin-ai-btn"
-          onClick={() => setShowAI(true)}
-          aria-label="Ask AI"
-        >
-          <Sparkles size={16} />
-          <span>Ask AI</span>
-        </button>
 
         {/* Notification Bell */}
         <div className="admin-notif-wrap" ref={notifRef}>
@@ -369,7 +358,6 @@ export function AdminHeader() {
         </div>
       </div>
 
-      <AskAIChat open={showAI} onClose={() => setShowAI(false)} />
     </header>
   );
 }

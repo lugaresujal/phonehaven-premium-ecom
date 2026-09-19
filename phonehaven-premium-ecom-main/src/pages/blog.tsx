@@ -19,7 +19,7 @@ function BlogComponent() {
 
   return (
     <PageLayout bare>
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Blog" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">
@@ -44,7 +44,7 @@ function BlogComponent() {
           const title = p.title || p.t || "Blog Post";
           const imgSrc = (p.i && p.i.startsWith("http"))
             ? p.i
-            : `https://images.unsplash.com/photo-${p.i || "1511707171634-5f897ff02aa9"}?auto=format&fit=crop&w=800&q=80`;
+            : `https://images.unsplash.com/photo-${p.i || "1511707171634-5f897ff02aa9"}?auto=format&fit=crop&w=1200&q=90`;
 
           return (
             <Link key={title} to="/blog" className="group rounded-2xl bg-card border border-border overflow-hidden hover:shadow-xl transition-all">

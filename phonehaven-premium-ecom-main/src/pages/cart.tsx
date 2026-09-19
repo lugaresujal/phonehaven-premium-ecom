@@ -30,7 +30,7 @@ function Cart() {
   return (
     <PageLayout title="" subtitle="" crumbs={[]}>
       <section
-        className="relative h-[220px] sm:h-[280px] md:h-[320px] flex items-center overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[150px]"
+        className="relative inner-banner md:h-[320px] flex items-center overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[150px]"
         style={{
           backgroundImage: `url(${innerbanner})`,
           backgroundSize: "cover",
@@ -42,7 +42,7 @@ function Cart() {
         <div className="absolute inset-0 bg-black/35" />
 
         <div className="container-hop relative z-10 text-white">
-          <div className="flex items-center gap-2 text-sm text-white/80 mb-5">
+          <div className="flex items-center gap-2 text-base text-white mb-5">
             <span>Home</span>
             <span>›</span>
             <span>Cart</span>
@@ -52,7 +52,7 @@ function Cart() {
             Shopping Cart
           </h1>
 
-          <p className="text-lg md:text-2xl text-white/90">
+          <p className="text-base md:text-2xl text-white/80">
             {!loading && items.length === 0
               ? "Your cart is currently empty."
               : "Review your selected devices and accessories before checkout."}
@@ -60,7 +60,7 @@ function Cart() {
         </div>
       </section>
 
-      <section className="container-hop py-10 grid lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-10">
+      <section className="container-hop py-6 md:py-10 grid lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-6 md:gap-10">
         {loading ? (
           <div className="col-span-full space-y-4">
             {[0, 1, 2].map((i) => (
@@ -87,14 +87,14 @@ function Cart() {
                     <img src={i.product.image} alt={i.product.name} className="w-full h-full rounded-xl object-cover hover:opacity-90 transition-opacity" />
                   </Link>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs uppercase tracking-widest text-muted-foreground">{i.product.brand}</p>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground truncate">{i.product.brand}</p>
                     <Link to={`/product/${i.product.slug || i.product.id}`} className="block mt-1 font-medium truncate hover:text-primary transition-colors">
                       {i.product.name}
                     </Link>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {[i.color, i.storage].filter(Boolean).join(" · ") || "Standard"}
+                    <p className="mt-1 text-sm text-muted-foreground truncate">
+                      {[i.ram, i.storage, i.color].filter(Boolean).join(" · ") || "Standard"}
                     </p>
-                    <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
+                    <div className="mt-3 flex items-center justify-start gap-3 flex-wrap">
                       <div className="flex items-center gap-1 border border-border rounded-full">
                         <button 
                           className="w-8 h-8 grid place-items-center hover:bg-muted rounded-full transition-colors"
@@ -112,7 +112,7 @@ function Cart() {
                           <Plus size={14} />
                         </button>
                       </div>
-                      <span className="font-serif text-lg">{formatINR(i.product.price * i.qty)}</span>
+                      <span className="font-serif text-base">{formatINR((i.price ?? i.product.price) * i.qty)}</span>
                     </div>
                   </div>
                   <button 
@@ -127,7 +127,7 @@ function Cart() {
               <div className="flex gap-3">
                 <input 
                   placeholder="Coupon code" 
-                  className="flex-1 min-w-0 px-4 py-3 rounded-full bg-card border border-border text-sm focus:outline-none focus:border-primary" 
+                  className="max-w-xs min-w-0 px-4 py-3 rounded-full bg-card border border-border text-sm focus:outline-none focus:border-primary" 
                 />
                 <button className="px-6 py-3 rounded-full bg-foreground text-background text-sm tracking-widest uppercase hover:bg-primary transition-colors">
                   Apply
@@ -135,8 +135,8 @@ function Cart() {
               </div>
             </div>
 
-            <aside className="bg-card border border-border rounded-2xl p-6 h-fit sticky top-28">
-              <p className="font-serif text-xl mb-4">Order Summary</p>
+            <aside className="bg-card border border-border rounded-2xl p-4 md:p-6 h-fit sticky top-28">
+              <p className="font-serif text-base mb-4">Order Summary</p>
               <div className="space-y-2 text-sm">
                 <Row label="Subtotal" value={formatINR(subtotal)} />
                 <Row label="Shipping" value={shipping === 0 ? "Free" : formatINR(shipping)} />

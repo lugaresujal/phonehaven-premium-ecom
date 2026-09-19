@@ -71,6 +71,34 @@ const upload = multer({ storage, fileFilter: imageFileFilter, limits: { fileSize
 
 // Serve uploaded files as static assets
 app.use("/api/uploads", express.static(uploadsDir));
+app.use("/uploads", express.static(uploadsDir));
+
+// ============================================
+// IMAGE UPLOAD API — Persistent Local Uploads
+// ============================================
+app.post("/api/upload", upload.single("image"), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image file provided." });
+    }
+    const url = `/api/uploads/${req.file.filename}`;
+    res.json({ success: true, url, filename: req.file.filename });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+app.post("/api/upload/multiple", upload.array("images", 20), (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: "No image files provided." });
+    }
+    const urls = req.files.map((f) => `/api/uploads/${f.filename}`);
+    res.json({ success: true, urls });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 
@@ -116,7 +144,11 @@ function requireAuth(req, res, next) {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    req.user = {
+      ...decoded,
+      id: decoded.userId || decoded.id,
+      userId: decoded.userId || decoded.id,
+    };
     next();
   } catch (err) {
     return res.status(401).json({ success: false, message: "Invalid or expired session. Please sign in again." });
@@ -268,7 +300,7 @@ app.get("/api/orders-test", (req, res) => {
 // ============================================
 // IMAGE UPLOAD API
 // ============================================
-app.post("/api/upload", async (req, res) => {
+app.post("/api/upload", requireAuth, async (req, res) => {
   try {
     await new Promise((resolve, reject) => {
       upload.single("image")(req, res, (err) => {
@@ -1088,7 +1120,7 @@ app.get("/api/dashboard/stats", async (req, res) => {
         totalSales,
         totalOrders,
         customers: userCount || new Set(orders.map((o) => o.userId)).size,
-        products: 48,
+        products: await prisma.product.count(),
         counts,
         statusBreakdown,
         recentOrders,
@@ -1552,7 +1584,7 @@ app.get("/api/products", async (req, res) => {
     const products = await prisma.product.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { brand: true, category: true },
+      include: { brand: true, category: true, colorVariants: { orderBy: { sortOrder: "asc" } } },
     });
     res.json({ success: true, products });
   } catch (e) {
@@ -1563,7 +1595,7 @@ app.get("/api/products", async (req, res) => {
 app.get("/api/products/:id", async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
-    const product = await prisma.product.findFirst({ where: { OR: [{ id: req.params.id }, { slug: req.params.id }] }, include: { brand: true, category: true, reviews: true } });
+    const product = await prisma.product.findFirst({ where: { OR: [{ id: req.params.id }, { slug: req.params.id }] }, include: { brand: true, category: true, reviews: true, colorVariants: { orderBy: { sortOrder: "asc" } } } });
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     res.json({ success: true, product });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
@@ -1572,13 +1604,36 @@ app.get("/api/products/:id", async (req, res) => {
 app.post("/api/products", async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
-    const { name, slug, brandId, categoryId, description, price, mrp, sku, stock, image, images, colors, storage, ram, type, status, featured, badge, highlights, tags } = req.body;
+    const { name, slug, brandId, categoryId, description, shortDescription, variants, price, mrp, sku, stock, image, images, colors, storage, ram, type, status, featured, badge, highlights, tags } = req.body;
     if (!name) return res.status(400).json({ success: false, message: "Product name is required" });
     if (!price) return res.status(400).json({ success: false, message: "Price is required" });
     const safeSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Date.now();
     const product = await prisma.product.create({
-      data: { name, slug: safeSlug, brandId: brandId || null, categoryId: categoryId || null, description, price: Number(price), mrp: Number(mrp || price), sku, stock: Number(stock || 0), image, images: images || [], colors: colors || [], storage: storage || [], ram, type, status: status || "Active", featured: Boolean(featured), badge, highlights: highlights || [], tags: tags || [] },
-      include: { brand: true, category: true }
+      data: {
+        name,
+        slug: safeSlug,
+        brandId: brandId || null,
+        categoryId: categoryId || null,
+        description,
+        shortDescription: shortDescription || null,
+        variants: Array.isArray(variants) ? variants : (variants ? variants : []),
+        price: Number(price),
+        mrp: Number(mrp || price),
+        sku,
+        stock: Number(stock || 0),
+        image,
+        images: images || [],
+        colors: colors || [],
+        storage: storage || [],
+        ram: ram || null,
+        type,
+        status: status || "Active",
+        featured: Boolean(featured),
+        badge,
+        highlights: highlights || [],
+        tags: tags || [],
+      },
+      include: { brand: true, category: true, colorVariants: { orderBy: { sortOrder: "asc" } } }
     });
     res.status(201).json({ success: true, product });
   } catch (e) {
@@ -1590,11 +1645,34 @@ app.post("/api/products", async (req, res) => {
 app.put("/api/products/:id", async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
-    const { name, slug, brandId, categoryId, description, price, mrp, sku, stock, image, images, colors, storage, ram, type, status, featured, badge, highlights, tags } = req.body;
+    const { name, slug, brandId, categoryId, description, shortDescription, variants, price, mrp, sku, stock, image, images, colors, storage, ram, type, status, featured, badge, highlights, tags } = req.body;
     const product = await prisma.product.update({
       where: { id: req.params.id },
-      data: { name, slug, brandId: brandId || null, categoryId: categoryId || null, description, price: price !== undefined ? Number(price) : undefined, mrp: mrp !== undefined ? Number(mrp) : undefined, sku, stock: stock !== undefined ? Number(stock) : undefined, image, images, colors, storage, ram, type, status, featured: featured !== undefined ? Boolean(featured) : undefined, badge, highlights, tags },
-      include: { brand: true, category: true }
+      data: {
+        name,
+        slug,
+        brandId: brandId || null,
+        categoryId: categoryId || null,
+        description,
+        shortDescription: shortDescription !== undefined ? shortDescription : undefined,
+        variants: variants !== undefined ? (Array.isArray(variants) ? variants : []) : undefined,
+        price: price !== undefined ? Number(price) : undefined,
+        mrp: mrp !== undefined ? Number(mrp) : undefined,
+        sku,
+        stock: stock !== undefined ? Number(stock) : undefined,
+        image,
+        images,
+        colors: colors !== undefined ? (Array.isArray(colors) ? colors : []) : undefined,
+        storage: storage !== undefined ? (Array.isArray(storage) ? storage : []) : undefined,
+        ram: ram !== undefined ? (ram && String(ram).trim() ? String(ram).trim() : null) : undefined,
+        type,
+        status,
+        featured: featured !== undefined ? Boolean(featured) : undefined,
+        badge,
+        highlights,
+        tags
+      },
+      include: { brand: true, category: true, colorVariants: { orderBy: { sortOrder: "asc" } } }
     });
     res.json({ success: true, product });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
@@ -1605,6 +1683,66 @@ app.delete("/api/products/:id", async (req, res) => {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
     await prisma.product.delete({ where: { id: req.params.id } });
     res.json({ success: true, message: "Product deleted" });
+  } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+// ============================================
+// COLOR VARIANT API
+// ============================================
+app.get("/api/products/:id/color-variants", async (req, res) => {
+  try {
+    if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
+    const variants = await prisma.colorVariant.findMany({
+      where: { productId: req.params.id },
+      orderBy: { sortOrder: "asc" },
+    });
+    res.json({ success: true, variants });
+  } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.put("/api/products/:id/color-variants", async (req, res) => {
+  try {
+    if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
+    const { variants } = req.body;
+    if (!Array.isArray(variants)) return res.status(400).json({ success: false, message: "variants array is required" });
+
+    const productId = req.params.id;
+    const existing = await prisma.product.findUnique({ where: { id: productId } });
+    if (!existing) return res.status(404).json({ success: false, message: "Product not found" });
+
+    // Delete existing variants and recreate
+    await prisma.colorVariant.deleteMany({ where: { productId } });
+
+    const created = [];
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i];
+      if (!v.colorName) continue;
+      const cv = await prisma.colorVariant.create({
+        data: {
+          productId,
+          colorName: v.colorName,
+          colorCode: v.colorCode || null,
+          images: v.images || [],
+          stock: Number(v.stock || 0),
+          sortOrder: i,
+        },
+      });
+      created.push(cv);
+    }
+
+    // Also update the product's colors array to stay in sync
+    const colorNames = created.map((v) => v.colorName);
+    await prisma.product.update({ where: { id: productId }, data: { colors: colorNames } });
+
+    res.json({ success: true, variants: created });
+  } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+});
+
+app.delete("/api/products/:productId/color-variants/:variantId", async (req, res) => {
+  try {
+    if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
+    await prisma.colorVariant.delete({ where: { id: req.params.variantId } });
+    res.json({ success: true, message: "Color variant deleted" });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
@@ -1947,61 +2085,204 @@ app.delete("/api/faqs/:id", async (req, res) => {
 // ============================================
 // REVIEWS API
 // ============================================
+
+// Helper: Recalculate product rating and review count
+async function recalculateProductRating(productId) {
+  try {
+    const approvedReviews = await prisma.review.findMany({
+      where: { productId, status: "Approved" },
+      select: { rating: true },
+    });
+    const count = approvedReviews.length;
+    const avg = count > 0 ? approvedReviews.reduce((sum, r) => sum + r.rating, 0) / count : 0;
+    await prisma.product.update({
+      where: { id: productId },
+      data: { rating: Math.round(avg * 10) / 10, reviewCount: count },
+    });
+  } catch (e) {
+    console.error("Failed to recalculate product rating:", e.message);
+  }
+}
+
 app.get("/api/reviews", async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
-    const { search, status } = req.query;
+    const { search, status, productId, userId, rating } = req.query;
     const where = {};
     if (status && status !== "All") where.status = status;
-    if (search) where.OR = [{ customerName: { contains: search, mode: "insensitive" } }, { title: { contains: search, mode: "insensitive" } }];
-    const reviews = await prisma.review.findMany({ where, orderBy: { createdAt: "desc" }, include: { product: { select: { name: true, image: true } }, user: { select: { name: true, email: true } } } });
-    res.json({ success: true, reviews });
+    if (productId) {
+      const targetProduct = await prisma.product.findFirst({
+        where: { OR: [{ id: productId }, { slug: productId }] },
+        select: { id: true, slug: true },
+      });
+      if (targetProduct) {
+        where.OR = [{ productId: targetProduct.id }, { productId: targetProduct.slug }, { productId }];
+      } else {
+        where.productId = productId;
+      }
+    }
+    if (userId) where.userId = userId;
+    if (rating) where.rating = Number(rating);
+    if (search) {
+      where.OR = [
+        { customerName: { contains: search, mode: "insensitive" } },
+        { title: { contains: search, mode: "insensitive" } },
+        { body: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    const reviews = await prisma.review.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        product: { select: { name: true, image: true } },
+        user: { select: { id: true, name: true, email: true } },
+      },
+    });
+
+    const mappedReviews = reviews.map((r) => {
+      const resolvedName = (r.user?.name || r.customerName || "Verified Buyer").trim();
+      const imgList = Array.isArray(r.images) ? r.images : [];
+      return {
+        ...r,
+        reviewId: r.id,
+        userName: resolvedName,
+        customerName: resolvedName,
+        reviewText: r.body,
+        images: imgList,
+        reviewImages: imgList,
+      };
+    });
+
+    res.json({ success: true, reviews: mappedReviews });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-app.post("/api/reviews", async (req, res) => {
+app.post("/api/reviews", requireAuth, async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
-    const { productId, customerName, rating, title, body, status, featured } = req.body;
-    if (!productId || !rating) return res.status(400).json({ success: false, message: "Product ID and rating are required" });
+    const { productId, customerName, userName, rating, title, body, images, reviewImages } = req.body;
+    if (!productId) return res.status(400).json({ success: false, message: "Product ID is required" });
+    if (!rating || rating < 1 || rating > 5) return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
+    if (!body || !body.trim()) return res.status(400).json({ success: false, message: "Review text is required" });
+
+    const userId = req.user.userId || req.user.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Authentication required." });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User account not found" });
+    }
+
+    const targetProduct = await prisma.product.findFirst({
+      where: { OR: [{ id: productId }, { slug: productId }] },
+      select: { id: true, name: true },
+    });
+    const canonicalProductId = targetProduct ? targetProduct.id : productId;
+
+    // Check if user has already reviewed this product
+    const existingReview = await prisma.review.findFirst({
+      where: { productId: canonicalProductId, userId: user.id },
+    });
+    if (existingReview) {
+      return res.status(400).json({ success: false, message: "You have already reviewed this product. You can edit your existing review instead." });
+    }
+
+    // Always prefer the authenticated user's actual registered name from account
+    const actualName = (user.name || req.user.name || userName || customerName || "Verified Buyer").trim();
+
+    const rawImages = reviewImages || images;
+    const imagesArray = Array.isArray(rawImages)
+      ? rawImages.filter((img) => typeof img === "string" && img.trim().length > 0)
+      : (typeof rawImages === "string" && rawImages.trim().length > 0 ? [rawImages.trim()] : []);
+
     const review = await prisma.review.create({
       data: {
-        productId,
-        customerName: customerName || "Customer",
+        productId: canonicalProductId,
+        userId: user.id,
+        customerName: actualName,
         rating: Number(rating),
-        title: title || null,
-        body: body || null,
-        status: status || "Pending",
-        featured: Boolean(featured),
+        title: title ? title.trim() : null,
+        body: body.trim(),
+        images: imagesArray,
+        status: "Approved",
+        featured: false,
       },
       include: {
         product: { select: { name: true, image: true } },
+        user: { select: { id: true, name: true, email: true } },
       },
     });
-    createNotification("New Review", `${customerName || "Customer"} left a ${rating}-star review`, "info", "Reviews", review.id);
-    res.status(201).json({ success: true, review });
+
+    await recalculateProductRating(canonicalProductId);
+
+    createNotification("New Review", `${actualName} left a ${rating}-star review for a product`, "info", "Reviews", review.id);
+
+    const formattedReview = {
+      ...review,
+      reviewId: review.id,
+      userName: actualName,
+      customerName: actualName,
+      reviewText: review.body,
+      images: imagesArray,
+      reviewImages: imagesArray,
+    };
+
+    res.status(201).json({ success: true, review: formattedReview });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-app.put("/api/reviews/:id", async (req, res) => {
+app.put("/api/reviews/:id", requireAuth, async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
-    const { customerName, rating, title, body, status, featured } = req.body;
+    const existingReview = await prisma.review.findUnique({ where: { id: req.params.id } });
+    if (!existingReview) return res.status(404).json({ success: false, message: "Review not found" });
+    const currentUserId = req.user.userId || req.user.id;
+    if (existingReview.userId && existingReview.userId !== currentUserId) {
+      return res.status(403).json({ success: false, message: "You can only edit your own reviews" });
+    }
+    const { customerName, userName, rating, title, body, images, reviewImages } = req.body;
+    const rawImages = reviewImages || images;
+    const imagesArray = rawImages !== undefined
+      ? (Array.isArray(rawImages)
+          ? rawImages.filter((img) => typeof img === "string" && img.trim().length > 0)
+          : (typeof rawImages === "string" && rawImages.trim().length > 0 ? [rawImages.trim()] : []))
+      : undefined;
+
     const review = await prisma.review.update({
       where: { id: req.params.id },
       data: {
-        customerName,
+        customerName: customerName || userName || undefined,
         rating: rating ? Number(rating) : undefined,
-        title,
-        body,
-        status,
-        featured: featured !== undefined ? Boolean(featured) : undefined,
+        title: title !== undefined ? title : undefined,
+        body: body !== undefined ? body : undefined,
+        images: imagesArray,
       },
       include: {
         product: { select: { name: true, image: true } },
+        user: { select: { id: true, name: true, email: true } },
       },
     });
-    res.json({ success: true, review });
+    if (rating) await recalculateProductRating(existingReview.productId);
+
+    const resolvedName = (review.user?.name || review.customerName || "Verified Buyer").trim();
+    const imgList = Array.isArray(review.images) ? review.images : [];
+    const formattedReview = {
+      ...review,
+      reviewId: review.id,
+      userName: resolvedName,
+      customerName: resolvedName,
+      reviewText: review.body,
+      images: imgList,
+      reviewImages: imgList,
+    };
+
+    res.json({ success: true, review: formattedReview });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
@@ -2010,14 +2291,23 @@ app.patch("/api/reviews/:id/status", async (req, res) => {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
     const { status, featured } = req.body;
     const review = await prisma.review.update({ where: { id: req.params.id }, data: { status, featured: featured !== undefined ? Boolean(featured) : undefined } });
+    await recalculateProductRating(review.productId);
     res.json({ success: true, review });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-app.delete("/api/reviews/:id", async (req, res) => {
+app.delete("/api/reviews/:id", requireAuth, async (req, res) => {
   try {
     if (!prisma) return res.status(500).json({ success: false, message: "DB not available" });
+    const existingReview = await prisma.review.findUnique({ where: { id: req.params.id } });
+    if (!existingReview) return res.status(404).json({ success: false, message: "Review not found" });
+    const currentUserId = req.user.userId || req.user.id;
+    if (existingReview.userId && existingReview.userId !== currentUserId) {
+      return res.status(403).json({ success: false, message: "You can only delete your own reviews" });
+    }
+    const productId = existingReview.productId;
     await prisma.review.delete({ where: { id: req.params.id } });
+    await recalculateProductRating(productId);
     res.json({ success: true, message: "Review deleted" });
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });

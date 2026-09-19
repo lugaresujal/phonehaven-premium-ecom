@@ -202,20 +202,20 @@ function AccountPage() {
       case "shipped":
         return "bg-blue-500/10 text-blue-600";
       case "out for delivery":
-        return "bg-orange-500/10 text-orange-600";
+        return "bg-amber-500/10 text-amber-600";
       case "packed":
-        return "bg-purple-500/10 text-purple-600";
+        return "bg-blue-500/10 text-blue-600";
       case "confirmed":
-        return "bg-indigo-500/10 text-indigo-600";
+        return "bg-blue-500/10 text-blue-600";
       case "processing":
       case "pending":
-        return "bg-yellow-500/10 text-yellow-600";
+        return "bg-amber-500/10 text-amber-600";
       case "cancellation requested":
         return "bg-amber-500/10 text-amber-600";
       case "cancelled":
         return "bg-red-500/10 text-red-600";
       default:
-        return "bg-gray-500/10 text-gray-600";
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -364,8 +364,8 @@ function AccountPage() {
   // If not logged in
   if (!loading && !user) {
     return (
-      <PageLayout title="" subtitle="" crumbs={[]}>
-        <section className="relative h-[220px] sm:h-[280px] md:h-[320px] flex items-center overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[150px]"
+      <PageLayout title="" subtitle="">
+        <section className="relative inner-banner md:h-[320px] flex items-start overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[150px]"
           style={{
             backgroundImage: `url(${innerbanner})`,
             backgroundSize: "cover",
@@ -374,14 +374,14 @@ function AccountPage() {
           }}
         >
           <div className="absolute inset-0 bg-black/35"></div>
-          <div className="container-hop relative z-10 text-white">
+          <div className="container-hop relative z-10 text-white pt-16 md:pt-20">
             <div className="flex items-center gap-2 text-sm text-white/80 mb-5">
               <span>Home</span>
               <span>›</span>
               <span>Account</span>
             </div>
-            <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl mb-4">My Account</h1>
-            <p className="text-lg md:text-2xl text-white/90">Please login to view your account</p>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl mb-4">My Account</h1>
+            <p className="text-lg md:text-2xl text-white/80">Please login to view your account</p>
           </div>
         </section>
         
@@ -392,7 +392,7 @@ function AccountPage() {
             <p className="text-muted-foreground mb-8">Please login to access your account, orders, and wishlist.</p>
             <Link 
               to="/login" 
-              className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-3 rounded-full text-sm tracking-widest uppercase hover:bg-primary transition-colors"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm tracking-widest uppercase hover:bg-primary/90 transition-colors"
             >
               Login Now
             </Link>
@@ -404,10 +404,10 @@ function AccountPage() {
 
   // Render account page
   return (
-    <PageLayout title="" subtitle="" crumbs={[]}>
+    <PageLayout title="" subtitle="">
       {/* Banner */}
       <section
-        className="relative h-[220px] sm:h-[280px] md:h-[340px] flex items-center overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[150px]"
+        className="relative inner-banner md:h-[260px] flex items-start overflow-hidden -mt-[100px] sm:-mt-[120px] md:-mt-[150px]"
         style={{
           backgroundImage: `url(${innerbanner})`,
           backgroundSize: "cover",
@@ -417,27 +417,27 @@ function AccountPage() {
       >
         <div className="absolute inset-0 bg-black/35"></div>
 
-        <div className="container-hop relative z-10 text-white">
-          <div className="flex items-center gap-2 text-sm text-white/80 mb-5">
+        <div className="container-hop relative z-10 text-white pt-16 md:pt-20">
+          <div className="flex items-center gap-2 text-sm text-white/80 mb-3">
             <span>Home</span>
             <span>›</span>
             <span>Account</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl mb-4">
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl mb-4">
             My Account
           </h1>
 
-          <p className="text-lg md:text-2xl text-white/90">
+          <p className="text-lg md:text-2xl text-white/80">
             {user?.name ? `Welcome back, ${user.name}` : "Manage your profile, orders and preferences."}
           </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="container-hop py-10 grid lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr] gap-8">
+      <section className="container-hop py-6 md:py-10 grid lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr] gap-6 md:gap-8">
         {/* Sidebar */}
-        <aside className="bg-card border border-border rounded-2xl p-3 h-fit">
+        <aside className="bg-card border border-border rounded-2xl p-3 h-fit flex flex-col gap-1">
           {tabs.map((t) => (
             <button
               key={t.label}
@@ -448,9 +448,9 @@ function AccountPage() {
                   setActiveTab(t.label);
                 }
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition ${
                 t.label === activeTab
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-primary/15 text-primary font-medium"
                   : "hover:bg-accent"
               }`}
             >
@@ -465,10 +465,10 @@ function AccountPage() {
           {activeTab === "Orders" && (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-serif text-3xl">Order History</h2>
+                <h2 className="font-serif text-2xl md:text-3xl">Order History</h2>
                 <button
                   onClick={() => refreshOrders()}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm font-medium hover:border-primary/30 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border text-sm font-medium hover:bg-muted/50 transition-colors"
                 >
                   <RefreshCw size={14} />
                   Refresh
@@ -481,19 +481,19 @@ function AccountPage() {
                   <p className="mt-4 text-muted-foreground">Loading your orders...</p>
                 </div>
               ) : orders.length === 0 ? (
-                <div className="bg-card border border-border rounded-2xl p-12 text-center">
+                <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center pb-20">
                   <Package size={48} className="mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-xl font-serif mb-2">No orders yet</h3>
                   <p className="text-muted-foreground mb-6">Start shopping to see your orders here.</p>
                   <Link 
                     to="/shop" 
-                    className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2 rounded-full text-sm tracking-widest uppercase hover:bg-primary transition-colors"
+                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm tracking-widest uppercase hover:bg-primary/90 transition-colors"
                   >
                     Browse Products
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 pb-20">
                   {orders.map((order) => (
                     <div
                       key={order.id}
@@ -505,7 +505,7 @@ function AccountPage() {
                         onClick={() => toggleOrderExpand(order.id)}
                       >
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
                             {order.orderId || order.id} · {new Date(order.date).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric', 
@@ -522,7 +522,7 @@ function AccountPage() {
 
                         <div className="flex items-center gap-4 flex-wrap">
                           <span
-                            className={`px-3 py-1 rounded-full text-xs uppercase tracking-widest ${getStatusColor(order.status)}`}
+                            className={`px-3 py-1 rounded-full text-xs ${getStatusColor(order.status)}`}
                           >
                             {order.status || 'Processing'}
                           </span>
@@ -614,7 +614,7 @@ function AccountPage() {
                             <Link
                               to="/track-order"
                               search={{ orderId: order.orderId }}
-                              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-xl text-sm font-medium hover:bg-primary/20 transition-colors"
+                              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
                             >
                               <Truck size={16} />
                               Track Order
@@ -626,7 +626,7 @@ function AccountPage() {
                             <div className="mt-4 pt-4 border-t border-border">
                               <button
                                 onClick={() => handleOpenReturnModal(order)}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-600 rounded-xl text-sm font-medium hover:bg-orange-500/20 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
                               >
                                 <RotateCcw size={16} />
                                 Request Return
@@ -702,9 +702,9 @@ function AccountPage() {
 
           {activeTab === "Wishlist" && (
             <div>
-              <h2 className="font-serif text-3xl mb-6">Your Wishlist</h2>
+              <h2 className="font-serif text-2xl md:text-3xl mb-6">Your Wishlist</h2>
               {wishlist.length === 0 ? (
-                <div className="bg-card border border-border rounded-2xl p-12 text-center">
+                <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center">
                   <Heart size={48} className="mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-xl font-serif mb-2">No items in wishlist</h3>
                   <p className="text-muted-foreground">Start adding your favorite products</p>
@@ -724,8 +724,8 @@ function AccountPage() {
 
           {activeTab === "Profile" && (
             <div>
-              <h2 className="font-serif text-3xl mb-6">Profile Details</h2>
-              <div className="bg-card border border-border rounded-2xl p-6">
+              <h2 className="font-serif text-2xl md:text-3xl mb-6">Profile Details</h2>
+              <div className="bg-card border border-border rounded-2xl p-4 md:p-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif text-3xl">
                     {(user?.email || user?.name || "?").trim().charAt(0).toUpperCase()}
@@ -751,7 +751,7 @@ function AccountPage() {
                           placeholder="98765 43210"
                         />
                         {profileError && (
-                          <p className="text-xs text-red-500 mt-1">{profileError}</p>
+                          <p className="text-xs text-red-600 mt-1">{profileError}</p>
                         )}
                       </div>
                     ) : (
@@ -779,7 +779,7 @@ function AccountPage() {
                           setProfilePhone(user?.phone || "");
                           setProfileError("");
                         }}
-                        className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-5 py-2 rounded-full text-sm font-medium hover:bg-muted/80 transition-colors"
+                        className="inline-flex items-center gap-2 border border-border px-5 py-2 rounded-full text-sm font-medium hover:bg-muted/50 transition-colors"
                       >
                         Cancel
                       </button>
@@ -790,7 +790,7 @@ function AccountPage() {
                         setEditingProfile(true);
                         setProfilePhone(user?.phone || "");
                       }}
-                      className="inline-flex items-center gap-2 bg-primary/10 text-primary px-5 py-2 rounded-full text-sm font-medium hover:bg-primary/20 transition-colors"
+                      className="inline-flex items-center gap-2 border border-border px-5 py-2 rounded-full text-sm font-medium hover:bg-muted/50 transition-colors"
                     >
                       <Edit size={14} />
                       Edit Phone Number
@@ -804,7 +804,7 @@ function AccountPage() {
           {activeTab === "Addresses" && (
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-serif text-3xl">Saved Addresses</h2>
+                <h2 className="font-serif text-2xl md:text-3xl">Saved Addresses</h2>
                 <button
                   onClick={handleAddNewAddress}
                   className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors"
@@ -831,7 +831,7 @@ function AccountPage() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Full Name *
                       </label>
                       <input
@@ -843,7 +843,7 @@ function AccountPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Phone *
                       </label>
                       <input
@@ -855,7 +855,7 @@ function AccountPage() {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Address Line 1 *
                       </label>
                       <input
@@ -867,7 +867,7 @@ function AccountPage() {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Address Line 2 (Optional)
                       </label>
                       <input
@@ -879,7 +879,7 @@ function AccountPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         City *
                       </label>
                       <input
@@ -891,7 +891,7 @@ function AccountPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         State *
                       </label>
                       <input
@@ -903,7 +903,7 @@ function AccountPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         PIN Code *
                       </label>
                       <input
@@ -915,7 +915,7 @@ function AccountPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground/70 mb-1">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">
                         Email (Optional)
                       </label>
                       <input
@@ -938,7 +938,7 @@ function AccountPage() {
                     </button>
                     <button
                       onClick={handleCancelEdit}
-                      className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-6 py-2 rounded-full text-sm font-medium hover:bg-muted/80 transition-colors"
+                      className="inline-flex items-center gap-2 border border-border px-6 py-2 rounded-full text-sm font-medium hover:bg-muted/50 transition-colors"
                     >
                       Cancel
                     </button>
@@ -948,7 +948,7 @@ function AccountPage() {
 
               {/* Address List */}
               {addresses.length === 0 && !showAddAddress ? (
-                <div className="bg-card border border-border rounded-2xl p-12 text-center">
+                <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center">
                   <MapPin size={48} className="mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-xl font-serif mb-2">No addresses saved</h3>
                   <p className="text-muted-foreground mb-6">Add your first address for faster checkout.</p>
@@ -965,29 +965,31 @@ function AccountPage() {
                   {addresses.map((a, i) => (
                     <div key={i} className="bg-card border border-border rounded-2xl p-5 hover:shadow-md transition-shadow">
                       <div className="flex flex-col h-full">
-                        <div className="flex-1">
+                        <div className="flex items-start justify-between gap-3">
                           <p className="font-medium text-lg">{a.fullName}</p>
-                          <p className="text-sm text-muted-foreground mt-1">{a.line1}</p>
+                          <div className="flex gap-2 shrink-0">
+                            <button
+                              onClick={() => handleEditAddress(i)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg text-sm font-medium hover:bg-muted/50 transition-colors"
+                            >
+                              <Edit size={14} />
+                              Change Address
+                            </button>
+                            <button
+                              onClick={() => handleDeleteAddress(i)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 text-red-600 rounded-lg text-sm font-medium hover:bg-red-500/20 transition-colors"
+                            >
+                              <Trash2 size={14} />
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <p className="text-sm text-muted-foreground">{a.line1}</p>
                           {a.line2 && <p className="text-sm text-muted-foreground">{a.line2}</p>}
                           <p className="text-sm text-muted-foreground">{a.city}, {a.state} — {a.pincode}</p>
                           <p className="text-sm text-muted-foreground mt-2">{a.phone}</p>
                           {a.email && <p className="text-sm text-muted-foreground break-all">{a.email}</p>}
-                        </div>
-                        <div className="flex gap-2 mt-4 pt-4 border-t border-border">
-                          <button
-                            onClick={() => handleEditAddress(i)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-500/20 transition-colors"
-                          >
-                            <Edit size={14} />
-                            Change Address
-                          </button>
-                          <button
-                            onClick={() => handleDeleteAddress(i)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 text-red-600 rounded-lg text-sm font-medium hover:bg-red-500/20 transition-colors"
-                          >
-                            <Trash2 size={14} />
-                            Delete
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -999,8 +1001,8 @@ function AccountPage() {
 
           {activeTab === "Wallet" && (
             <div>
-              <h2 className="font-serif text-3xl mb-6">Wallet Balance</h2>
-              <div className="bg-card border border-border rounded-2xl p-12 text-center">
+              <h2 className="font-serif text-2xl md:text-3xl mb-6">Wallet Balance</h2>
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center">
                 <Wallet size={48} className="mx-auto text-muted-foreground mb-4" />
                 <p className="text-3xl font-serif mb-2">₹0.00</p>
                 <p className="text-muted-foreground">No transactions yet</p>
@@ -1010,7 +1012,7 @@ function AccountPage() {
 
           {activeTab === "Coupons" && (
             <div>
-              <h2 className="font-serif text-3xl mb-6">Your Coupons</h2>
+              <h2 className="font-serif text-2xl md:text-3xl mb-6">Your Coupons</h2>
               {coupons && coupons.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {coupons.map((c) => (
@@ -1022,7 +1024,7 @@ function AccountPage() {
                           </span>
                           <h3 className="text-xl font-bold font-mono tracking-wider text-foreground">{c.code}</h3>
                         </div>
-                        <Tag size={24} className="text-primary/60" />
+                        <Tag size={24} className="text-primary" />
                       </div>
                       <div className="mt-4 pt-4 border-t border-border/60 text-xs text-muted-foreground space-y-1">
                         {c.minOrder && <p>Min Order: ₹{c.minOrder}</p>}
@@ -1032,7 +1034,7 @@ function AccountPage() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-card border border-border rounded-2xl p-12 text-center">
+                <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center">
                   <Tag size={48} className="mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-xl font-serif mb-2">No coupons available</h3>
                   <p className="text-muted-foreground">Check back later for special offers</p>
@@ -1043,8 +1045,8 @@ function AccountPage() {
 
           {activeTab === "Notifications" && (
             <div>
-              <h2 className="font-serif text-3xl mb-6">Notifications</h2>
-              <div className="bg-card border border-border rounded-2xl p-12 text-center">
+              <h2 className="font-serif text-2xl md:text-3xl mb-6">Notifications</h2>
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center">
                 <Bell size={48} className="mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-xl font-serif mb-2">No notifications</h3>
                 <p className="text-muted-foreground">We'll keep you updated here</p>
@@ -1067,7 +1069,7 @@ function AccountPage() {
               </div>
               <button
                 onClick={() => !isSubmittingReturn && setReturnModalOrder(null)}
-                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
               >
                 <X size={16} />
               </button>
@@ -1194,7 +1196,7 @@ function AccountPage() {
               </div>
               <button
                 onClick={() => !isCancelling && setCancelModalOrder(null)}
-                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
               >
                 <X size={16} />
               </button>
@@ -1257,7 +1259,7 @@ function AccountPage() {
                 className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                   isCancelling || !cancelReason || (cancelReason === "Other" && !cancelCustomReason.trim())
                     ? "bg-muted text-muted-foreground cursor-not-allowed"
-                    : "bg-red-600 text-white hover:bg-red-700"
+                    : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
                 }`}
               >
                 {isCancelling ? (

@@ -3,6 +3,7 @@ import { AdminHeader } from "../components/layout/AdminHeader";
 import { AdminSidebar } from "../components/layout/AdminSidebar";
 import { SidebarProvider } from "../contexts/SidebarContext";
 
+
 interface AdminLayoutProps {
   children: ReactNode;
 }

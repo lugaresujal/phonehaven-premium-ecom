@@ -26,7 +26,7 @@ function WishlistPage() {
     <PageLayout>
       {/* Banner */}
       <section
-        className="relative h-[260px] md:h-[320px] flex items-center overflow-hidden"
+        className="relative inner-banner md:h-[320px] flex items-center overflow-hidden"
         style={{
           backgroundImage: `url(${innerbanner})`,
           backgroundSize: "cover",
@@ -47,7 +47,7 @@ function WishlistPage() {
             Your Wishlist
           </h1>
 
-          <p className="text-base sm:text-lg md:text-2xl text-white/90">
+          <p className="text-base sm:text-lg md:text-2xl text-white/80">
             {loading
               ? "Loading your saved devices…"
               : items.length === 0
@@ -80,7 +80,7 @@ function WishlistPage() {
             <p className="text-muted-foreground mb-8">Start adding your favourite devices!</p>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-3 rounded-full text-sm tracking-widest uppercase hover:bg-primary transition-colors"
+              className="inline-flex items-center gap-2 bg-foreground text-primary-foreground px-8 py-3 rounded-full text-sm tracking-widest uppercase hover:bg-primary transition-colors"
             >
               Browse Products <ArrowRight size={14} />
             </Link>

@@ -87,7 +87,7 @@ export const Route = createFileRoute("/repair")({
 
     return (
       <PageLayout bare>
-        <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+        <section className="relative inner-banner md:h-[280px] md:aspect-auto overflow-hidden">
           <img src={innerBanner} alt="Repair Services" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
           <div className="absolute inset-0 opacity-[0.03]">

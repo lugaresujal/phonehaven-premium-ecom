@@ -31,7 +31,7 @@ export const Route = createFileRoute("/about")({
   component: () => (
     <PageLayout bare>
       {/* Hero Banner */}
-      <section className="relative aspect-[16/9] md:h-[320px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[320px] md:aspect-auto overflow-hidden">
         <img
           src={innerBanner}
           alt="About House of Phones"
@@ -45,18 +45,18 @@ export const Route = createFileRoute("/about")({
             About Us
           </p>
 
-          <h1 className="mt-3 font-serif text-5xl md:text-6xl">
+          <h1 className="mt-3 font-serif text-3xl md:text-6xl">
             Our Story
           </h1>
 
-          <p className="mt-4 max-w-2xl text-lg text-white/90">
+          <p className="mt-2 md:mt-4 max-w-2xl text-sm md:text-lg text-white/90">
             A boutique built for the ones who care about detail.
           </p>
         </div>
       </section>
 
       {/* About Section */}
-      <section className="container-hop py-16 lg:py-24">
+      <section className="container-hop py-10 md:py-16 lg:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Image */}
           <div className="relative">
@@ -88,7 +88,7 @@ export const Route = createFileRoute("/about")({
               </p>
             </div>
 
-            <h2 className="font-serif text-4xl leading-tight md:text-5xl">
+            <h2 className="font-serif text-3xl leading-tight md:text-5xl">
               More than a store.
               <br />
               <span className="text-primary">A relationship.</span>
@@ -141,7 +141,7 @@ export const Route = createFileRoute("/about")({
               ))}
             </div>
 
-            <button className="mt-8 rounded-full bg-primary px-8 py-3.5 font-medium text-white shadow-lg transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-xl">
+            <button className="mt-8 rounded-full bg-primary px-10 py-4 font-semibold text-primary-foreground shadow-xl transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-2xl">
               Explore Our Collection
             </button>
           </div>
@@ -173,7 +173,7 @@ export const Route = createFileRoute("/about")({
           >
             <stat.icon size={28} className="mx-auto text-primary" />
 
-            <p className="mt-4 font-serif text-4xl">{stat.label}</p>
+            <p className="mt-4 font-serif text-3xl md:text-4xl">{stat.label}</p>
 
             <p className="mt-1 text-sm text-muted-foreground">
               {stat.description}
@@ -186,7 +186,7 @@ export const Route = createFileRoute("/about")({
       {/* MEET OUR FOUNDER */}
       {/* ========================================================= */}
 
-      <section className="container-hop py-20 lg:py-28">
+      <section className="container-hop py-10 md:py-20 lg:py-28">
         <div className="overflow-hidden rounded-[2rem] border border-border bg-muted/20 shadow-sm">
           <div className="grid items-center lg:grid-cols-2">
             
@@ -205,12 +205,12 @@ export const Route = createFileRoute("/about")({
             <div className="px-6 py-12 sm:px-10 lg:px-14">
               <div className="mb-5 flex items-center gap-3">
                 <span className="h-px w-10 bg-primary" />
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+                <p className="text-xs font-semibold tracking-wide text-primary">
                   Meet Our Founder
                 </p>
               </div>
 
-              <h2 className="font-serif text-4xl leading-tight md:text-5xl">
+              <h2 className="font-serif text-3xl leading-tight md:text-5xl">
                 The Visionary
                 <br />
                 <span className="text-primary">Behind the Legacy.</span>
@@ -296,13 +296,13 @@ export const Route = createFileRoute("/about")({
       </section>
 
       {/* Final Brand Message */}
-      <section className="container-hop pb-20 lg:pb-28">
+      <section className="container-hop pb-10 md:pb-20 lg:pb-28">
         <div className="rounded-[2rem] bg-primary px-6 py-14 text-center text-white sm:px-10">
-          <p className="text-sm font-medium uppercase tracking-[0.25em] text-white/70">
+          <p className="text-sm font-medium uppercase tracking-[0.25em] text-white/80">
             House of Phones
           </p>
 
-          <h2 className="mx-auto mt-4 max-w-3xl font-serif text-3xl leading-tight sm:text-4xl md:text-5xl">
+          <h2 className="mx-auto mt-4 max-w-3xl font-serif text-3xl leading-tight md:text-5xl">
             Technology you love.
             <br />
             Service you can trust.

@@ -405,7 +405,7 @@ const rawAccessories: RawAccessory[] = [
   {
     id: "acc-27",
     slug: "budget-smart-watch",
-    name: "Budget Smart Watch",
+    name: "Essential Smart Watch",
     brand: "Noise",
     category: "Smartwatches",
     image: smartwaches4,

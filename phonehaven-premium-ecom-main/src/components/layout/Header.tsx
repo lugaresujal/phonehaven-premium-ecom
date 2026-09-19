@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Link as RRLink, useNavigate } from "react-router-dom";
-import { MapPin, Phone, Package, User, Heart, ShoppingBag, Search, Menu, X, ChevronRight, ChevronDown } from "lucide-react";
+import { Link as RRLink, useNavigate, useLocation } from "react-router-dom";
+import { MapPin, Phone, Package, User, Heart, ShoppingBag, Search, Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/lib/store/auth";
 import { useCart } from "@/lib/store/cart";
 import { useWishlist } from "@/lib/store/wishlist";
@@ -20,32 +20,6 @@ const nav = [
   { label: "Contact", to: "/contact" },
 ];
 
-const shopSubCategories = [
-  { label: "Apple", to: "/shop?q=apple" },
-  { label: "Samsung", to: "/shop?q=samsung" },
-  { label: "OnePlus", to: "/shop?q=oneplus" },
-  { label: "Oppo", to: "/shop?q=oppo" },
-  { label: "Vivo", to: "/shop?q=vivo" },
-  { label: "Google", to: "/shop?q=google" },
-  { label: "Nothing", to: "/shop?q=nothing" },
-  { label: "Xiaomi", to: "/shop?q=xiaomi" },
-  { label: "Motorola", to: "/shop?q=motorola" },
-  { label: "Realme", to: "/shop?q=realme" },
-  { label: "Honor", to: "/shop?q=honor" },
-  { label: "Nokia", to: "/shop?q=nokia" },
-];
-
-const accessorySubCategories = [
-  { label: "iPhone Covers", to: "/accessories?category=iPhone+Covers" },
-  { label: "Screen Guards", to: "/accessories?category=Screen+Guards" },
-  { label: "Power Banks", to: "/accessories?category=Power+Banks" },
-  { label: "Fast Chargers", to: "/accessories?category=Fast+Chargers" },
-  { label: "Wireless Earbuds", to: "/accessories?category=Wireless+Earbuds" },
-  { label: "Smartwatches", to: "/accessories?category=Smartwatches" },
-  { label: "Korean Bags", to: "/accessories?category=Korean+Bags" },
-  { label: "Wireless Keyboard & Mouse", to: "/accessories?category=Wireless+Keyboard+%26+Mouse" },
-];
-
 export function Header() {
   const { allProducts } = useProducts();
   const { settings } = useSettings();
@@ -57,29 +31,10 @@ export function Header() {
   const { count } = useCart();
   const { ids } = useWishlist();
   const navigate = useNavigate();
+  const location = useLocation();
   const wishlistCount = ids.length;
-  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [mobileSubOpen, setMobileSubOpen] = useState<string | null>(null);
 
-  const initial = (user?.email || user?.name || "?").trim().charAt(0).toUpperCase();
-
-  const handleNavEnter = useCallback((label: string) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setHoveredNav(label);
-  }, []);
-
-  const handleNavLeave = useCallback(() => {
-    hoverTimeoutRef.current = setTimeout(() => setHoveredNav(null), 120);
-  }, []);
-
-  const handleDropdownEnter = useCallback(() => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-  }, []);
-
-  const handleDropdownLeave = useCallback(() => {
-    hoverTimeoutRef.current = setTimeout(() => setHoveredNav(null), 120);
-  }, []);
+  const initial = (user?.name || user?.email || "?").trim().charAt(0).toUpperCase();
 
   const results = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -117,13 +72,6 @@ export function Header() {
     };
   }, [open]);
 
-  // Cleanup hover timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    };
-  }, []);
-
   const storePhone = settings.storePhone || "+91 9637671118";
   const cleanPhone = storePhone.replace(/\s+/g, "");
   const storeCity = settings.city || "Pune";
@@ -136,45 +84,36 @@ export function Header() {
       {/* Main Header */}
       <header className="sticky top-0 z-50">
         {/* Top info bar */}
-        <div className="hidden md:block bg-foreground text-background/90 text-xs">
-          <div className="container-hop flex items-center justify-between h-9">
+        <div className="hidden md:block bg-foreground text-background/90 text-sm">
+          <div className="container-hop flex items-center justify-between min-h-[40px] pt-3 pb-2">
             <div className="flex items-center gap-6">
               <a
                 href={`https://www.google.com/maps?q=${encodeURIComponent(storeAddress)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-brand-light transition-colors"
+                className="inline-flex items-center gap-1.5 py-2 hover:text-brand-light transition-colors"
               >
-                <MapPin size={12} /> {storeCity}, {storeState}
+                <MapPin size={14} /> {storeCity}, {storeState}
               </a>
               <a
                 href={`tel:${cleanPhone}`}
-                className="inline-flex items-center gap-1.5 hover:text-brand-light transition-colors"
+                className="inline-flex items-center gap-1.5 py-2 hover:text-brand-light transition-colors"
               >
-                <Phone size={12} /> {storePhone}
+                <Phone size={14} /> {storePhone}
               </a>
             </div>
             <div className="flex items-center gap-6">
               {isTrackingEnabled && (
-                <Link to="/track-order" className="inline-flex items-center gap-1.5 hover:text-brand-light">
-                  <Package size={12} /> Track Order
+                <Link
+                  to="/track-order"
+                  className={`inline-flex items-center gap-1.5 py-2 transition-colors ${location.pathname === "/track-order" ? "text-brand-light font-semibold" : "hover:text-brand-light"}`}
+                  aria-current={location.pathname === "/track-order" ? "page" : undefined}
+                >
+                  <Package size={14} /> Track Order
                 </Link>
               )}
-              {isAuthenticated ? (
-                <span className="inline-flex items-center gap-3">
-                  <Link to="/account" className="hover:text-brand-light">Hi, {user?.name?.split(" ")[0] ?? "Account"}</Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      navigate("/");
-                    }}
-                    className="hover:text-brand-light"
-                  >
-                    Logout
-                  </button>
-                </span>
-              ) : (
-                <Link to="/login" className="hover:text-brand-light">Sign In / Register</Link>
+              {!isAuthenticated && (
+                <Link to="/login" className="py-2 hover:text-brand-light">Sign In / Register</Link>
               )}
             </div>
           </div>
@@ -182,7 +121,7 @@ export function Header() {
 
         {/* Main bar */}
         <div className="bg-background/85 backdrop-blur-xl border-b border-border">
-          <div className="container-hop grid grid-cols-[auto_1fr_auto] items-center gap-4 h-20">
+          <div className="container-hop grid grid-cols-[auto_1fr_auto] items-center gap-4 h-20 md:h-24">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setOpen((v) => !v)}
@@ -195,70 +134,17 @@ export function Header() {
               <Logo />
             </div>
 
-            <nav className="hidden lg:flex items-center justify-center gap-9">
-              {nav.map((n) => {
-                const hasDropdown = n.label === "Shop" || n.label === "Accessories";
-                const isHovered = hoveredNav === n.label;
-                return (
-                  <div
-                    key={n.to}
-                    className="relative"
-                    onMouseEnter={() => hasDropdown && handleNavEnter(n.label)}
-                    onMouseLeave={() => hasDropdown && handleNavLeave()}
-                  >
-                    <Link
-                      to={n.to}
-                      activeProps={{ className: "text-primary" }}
-                      className={`text-[13px] tracking-[0.18em] uppercase font-medium transition-colors relative inline-flex items-center gap-1 ${
-                        isHovered ? "text-primary" : "text-foreground/80 hover:text-primary"
-                      }`}
-                    >
-                      {n.label}
-                      {hasDropdown && (
-                        <ChevronDown
-                          size={12}
-                          className={`transition-transform duration-200 ${isHovered ? "rotate-180" : ""}`}
-                        />
-                      )}
-                    </Link>
-
-                    {hasDropdown && isHovered && (
-                      <div
-                        className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50"
-                        onMouseEnter={handleDropdownEnter}
-                        onMouseLeave={handleDropdownLeave}
-                      >
-                        <div className="bg-background/95 backdrop-blur-xl border border-border rounded-xl shadow-xl p-5 min-w-[220px]">
-                          <p className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium mb-3">
-                            {n.label === "Shop" ? "Shop by Brand" : "Browse Categories"}
-                          </p>
-                          <ul className="flex flex-col gap-0.5">
-                            {(n.label === "Shop" ? shopSubCategories : accessorySubCategories).map((sub) => (
-                              <li key={sub.to}>
-                                <RRLink
-                                  to={sub.to}
-                                  className="block px-3 py-2 text-sm text-foreground/80 hover:text-primary hover:bg-accent/60 rounded-lg transition-colors"
-                                >
-                                  {sub.label}
-                                </RRLink>
-                              </li>
-                            ))}
-                          </ul>
-                          <div className="mt-3 pt-3 border-t border-border">
-                            <RRLink
-                              to={n.to}
-                              className="flex items-center justify-between px-3 py-2 text-sm font-medium text-primary hover:bg-accent/60 rounded-lg transition-colors"
-                            >
-                              View All {n.label === "Shop" ? "Phones" : "Accessories"}
-                              <ChevronRight size={14} />
-                            </RRLink>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <nav className="hidden lg:flex items-center justify-center gap-9 h-full">
+              {nav.map((n) => (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  activeProps={{ className: "text-foreground after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:right-0 after:h-[3px] after:rounded-full after:bg-primary" }}
+                  className="relative text-[13px] tracking-[0.18em] uppercase font-medium transition-colors text-foreground/80 hover:text-primary"
+                >
+                  {n.label}
+                </Link>
+              ))}
             </nav>
 
             <div className="flex items-center gap-1 sm:gap-2">
@@ -286,9 +172,11 @@ export function Header() {
               </Link>
               <Link
                 to="/account"
+                activeProps={{ className: "p-2.5 rounded-full bg-primary/10 hidden sm:inline-flex" }}
                 className="p-2.5 rounded-full hover:bg-accent hidden sm:inline-flex"
                 aria-label={isAuthenticated ? `Account — ${user?.email ?? ""}` : "Account"}
                 title={isAuthenticated ? user?.email : "Account"}
+                aria-current="page"
               >
                 {isAuthenticated ? (
                   <span className="h-[18px] min-w-[18px] px-[3px] rounded-full bg-primary text-primary-foreground text-[11px] font-semibold grid place-items-center leading-none">
@@ -353,54 +241,27 @@ export function Header() {
 
 
           {open && (
-            <div className="lg:hidden border-t border-border bg-background max-h-[calc(100vh-5rem)] overflow-y-auto">
+            <>
+            <div className="lg:hidden fixed inset-0 bg-black/40 z-40" onClick={() => setOpen(false)} />
+            <div className="lg:hidden border-t border-border bg-background max-h-[calc(100vh-6rem)] overflow-y-auto relative z-50">
               <div className="container-hop py-4 flex flex-col gap-1">
-                {nav.map((n) => {
-                  const hasSub = n.label === "Shop" || n.label === "Accessories";
-                  const subOpen = mobileSubOpen === n.label;
-                  const subs = n.label === "Shop" ? shopSubCategories : n.label === "Accessories" ? accessorySubCategories : [];
-                  return (
-                    <div key={n.to}>
-                      <div className="flex items-center">
-                        <Link
-                          to={n.to}
-                          onClick={() => setOpen(false)}
-                          className="py-2.5 text-sm uppercase tracking-wider flex-1"
-                        >
-                          {n.label}
-                        </Link>
-                        {hasSub && (
-                          <button
-                            onClick={() => setMobileSubOpen(subOpen ? null : n.label)}
-                            className="p-2 -mr-2"
-                            aria-expanded={subOpen}
-                          >
-                            <ChevronDown
-                              size={16}
-                              className={`transition-transform duration-200 ${subOpen ? "rotate-180" : ""}`}
-                            />
-                          </button>
-                        )}
-                      </div>
-                      {hasSub && subOpen && (
-                        <div className="pl-4 flex flex-col gap-0.5">
-                          {subs.map((sub) => (
-                            <RRLink
-                              key={sub.to}
-                              to={sub.to}
-                              onClick={() => setOpen(false)}
-                              className="py-2 text-sm text-foreground/70 hover:text-primary"
-                            >
-                              {sub.label}
-                            </RRLink>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                {nav.map((n) => (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    onClick={() => setOpen(false)}
+                    className="py-2.5 text-sm uppercase tracking-wider"
+                  >
+                    {n.label}
+                  </Link>
+                ))}
                 <div className="mt-2 pt-3 border-t border-border flex flex-col gap-1">
-                  <RRLink to="/track-order" onClick={() => setOpen(false)} className="py-2.5 text-sm uppercase tracking-wider">
+                  <RRLink
+                    to="/track-order"
+                    onClick={() => setOpen(false)}
+                    className={`py-2.5 text-sm uppercase tracking-wider ${location.pathname === "/track-order" ? "text-primary font-semibold" : ""}`}
+                    aria-current={location.pathname === "/track-order" ? "page" : undefined}
+                  >
                     Track Order
                   </RRLink>
                   {isAuthenticated ? (
@@ -426,7 +287,8 @@ export function Header() {
                   )}
                 </div>
               </div>
-            </div>
+              </div>
+            </>
           )}
         </div>
       </header>

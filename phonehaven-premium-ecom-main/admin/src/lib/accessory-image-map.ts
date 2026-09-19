@@ -134,9 +134,42 @@ export const accessoryNameImageMap: Record<string, string> = {
   "Silicone Case — iPhone 15": iphone16cover,
 };
 
+// Reverse map: filename pattern -> correct local image
+const imageNameMap: Record<string, string> = {
+  "smartwatches1": smartwaches1,
+  "smartwatches2": smartwaches2,
+  "smartwatches3": smartwaches3,
+  "smartwatches4": smartwaches4,
+  "iphone16cover": iphone16cover,
+  "iphone16cover1": iphone16cover1,
+  "iphone16promaxcover": iphone16promaxcover,
+  "iphone17cover": iphone17cover,
+  "iphone17cover2": iphone17cover2,
+  "iphone17procover": iphone17procover,
+  "iphone15screenguard": iphone15screenguard,
+  "iphone15promaxscreenguard": iphone15promaxscreenguard,
+  "iphone16screenguard": iphone16screenguard,
+  "iphone16promaxscreenguard": iphone16promaxscreenguard,
+  "iphone17screenguard": iphone17screenguard,
+  "iphone17promaxscreenguard": iphone17promaxscreenguard,
+  "xiaomi powerbank": xiaomipowerbank,
+  "ugreen powerbank": ugreenpowerbank,
+  "androidnormalpowerbank": androidnormalpowerbank,
+  "iphone powerbank": iphonepowerbank,
+  "androidandiphonefastchargercombo": androidandiphonefastchargercombo,
+  "androidfastcharger": androidfastcharger,
+  "iphonefastcharger": iphonefastcharger,
+  "wirelessearbuds": wirelessearbuds,
+  "wirelesserbuds1": wirelesserbuds1,
+  "wirelesserbuds2": wirelesserbuds2,
+  "wirelesserbuds3": wirelesserbuds3,
+  "koreanbag": koreanbag,
+  "wirelessmouseandkeyboard": wirelesskeyboardandmouse,
+};
+
 /**
  * Get the correct image for an accessory product.
- * Tries slug match first, then name match. Returns the original image if no match found.
+ * Tries slug match first, then name match, then filename match. Returns the original image if no match found.
  */
 export function getAccessoryImage(product: { slug?: string; name: string; image?: string }): string {
   if (product.slug && accessoryImageMap[product.slug]) {
@@ -144,6 +177,14 @@ export function getAccessoryImage(product: { slug?: string; name: string; image?
   }
   if (accessoryNameImageMap[product.name]) {
     return accessoryNameImageMap[product.name];
+  }
+  if (product.image) {
+    const imgLower = product.image.toLowerCase();
+    for (const [filename, val] of Object.entries(imageNameMap)) {
+      if (imgLower.includes(filename.toLowerCase())) {
+        return val;
+      }
+    }
   }
   return product.image || "";
 }

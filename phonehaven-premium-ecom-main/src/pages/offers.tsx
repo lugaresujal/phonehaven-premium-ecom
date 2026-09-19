@@ -216,7 +216,7 @@ function Offers() {
   return (
     <PageLayout bare>
       {/* Hero Banner - Mobile Responsive Fix */}
-      <section className="relative aspect-[16/9] md:h-[320px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[320px] md:aspect-auto overflow-hidden">
         <img
           src={innerBanner}
           alt="Offers Banner"
@@ -355,7 +355,7 @@ function Offers() {
               <h2 className="font-serif text-2xl sm:text-3xl">Products on Offer</h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">Grab these deals before they're gone</p>
             </div>
-            <Link to="/shop" className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium text-primary hover:gap-3 transition-all">
+            <Link to="/shop" className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs md:text-sm font-medium bg-card border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">
               View All <ChevronRight size={14} className="hidden sm:inline-block" />
               <ChevronRight size={12} className="sm:hidden" />
             </Link>
@@ -363,12 +363,7 @@ function Offers() {
           
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="relative">
-                <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 bg-red-500 text-white text-[8px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-medium">
-                  -15% OFF
-                </div>
-                <ProductCard product={product} />
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
@@ -389,7 +384,7 @@ function OfferCard({ offer }: { offer: any }) {
   const Icon = offer.icon;
   
   return (
-    <div className={`group relative rounded-2xl ${offer.bgColor || 'bg-card'} border border-border/50 p-4 sm:p-5 md:p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden`}>
+    <div className={`group relative rounded-2xl bg-secondary border border-border/50 p-4 sm:p-5 md:p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden`}>
       {/* Decorative gradient */}
       <div className={`absolute top-0 right-0 w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 bg-gradient-to-br ${offer.color} opacity-5 rounded-full blur-2xl group-hover:opacity-10 transition-opacity duration-500`}></div>
       
@@ -409,7 +404,7 @@ function OfferCard({ offer }: { offer: any }) {
           </div>
           
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">{offer.description}</p>
-          <p className="text-[10px] sm:text-xs text-foreground/70 mt-1 sm:mt-2 flex items-center gap-1">
+          <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-2 flex items-center gap-1">
             <Tag size={10} className="sm:hidden text-primary" />
             <Tag size={12} className="hidden sm:inline-block text-primary" />
             {offer.details}

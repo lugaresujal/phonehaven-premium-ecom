@@ -175,7 +175,7 @@ function Track() {
 
   return (
     <PageLayout bare>
-      <section className="relative aspect-[16/9] md:h-[280px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[220px] md:aspect-auto overflow-hidden">
         <img src={innerBanner} alt="Track Your Order" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 opacity-[0.03]">
@@ -184,7 +184,7 @@ function Track() {
             <rect width="100%" height="100%" fill="url(#trackPattern)" />
           </svg>
         </div>
-        <div className="container-hop relative z-10 flex h-full flex-col justify-center text-white px-4 sm:px-6 md:px-8">
+        <div className="container-hop relative z-10 flex h-full flex-col justify-center text-white px-4 sm:px-6 md:px-8 py-8 md:py-10">
           <nav className="flex flex-wrap items-center gap-1.5 text-[10px] sm:text-xs text-white/60 mb-2 md:mb-3" aria-label="Breadcrumb">
             <Link to="/" className="hover:text-white/90">Home</Link>
             <ChevronRight size={12} />
@@ -198,40 +198,40 @@ function Track() {
       {/* Track Order Form */}
       {!orderTrackingEnabled ? (
         <section className="container-hop py-10 max-w-3xl">
-          <div className="bg-card border border-border rounded-2xl p-8 text-center">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 text-center">
             <AlertTriangle size={40} className="mx-auto mb-3 text-muted-foreground/60" />
             <h3 className="text-lg font-serif mb-1">Order Tracking Unavailable</h3>
             <p className="text-sm text-muted-foreground">Order tracking is currently disabled. Please contact support for assistance.</p>
           </div>
         </section>
       ) : (
-      <section className="container-hop py-10 max-w-3xl">
-        <form onSubmit={handleSearch} className="flex gap-3 mb-10">
+      <section className="container-hop py-6 md:py-10 max-w-3xl">
+        <form onSubmit={handleSearch} className="flex gap-2 md:gap-3 mb-6 md:mb-10">
           <input
             placeholder="Order ID (e.g. HOP-2087344)"
-            className="flex-1 px-5 py-3.5 rounded-full bg-card border border-border text-sm outline-none focus:border-primary"
+            className="flex-1 px-4 md:px-5 py-3 md:py-3.5 rounded-full bg-card border border-border text-sm outline-none focus:border-primary"
             value={orderIdInput}
             onChange={(e) => setOrderIdInput(e.target.value)}
           />
           <button
             type="submit"
             disabled={loading || !orderIdInput.trim()}
-            className="px-8 py-3.5 rounded-full bg-foreground text-background text-sm tracking-widest uppercase hover:bg-primary transition-colors flex items-center gap-2"
+            className="px-5 md:px-8 py-3 md:py-3.5 rounded-full bg-primary text-primary-foreground text-xs md:text-sm tracking-widest uppercase hover:bg-primary/90 transition-colors flex items-center gap-2"
           >
-            {loading ? <RefreshCw size={16} className="animate-spin" /> : <Search size={16} />}
+            {loading ? <RefreshCw size={16} className="animate-spin" /> : <Package size={16} />}
             Track
           </button>
         </form>
 
         {loading && (
-          <div className="bg-card border border-border rounded-2xl p-12 text-center">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-12 text-center">
             <RefreshCw size={32} className="mx-auto text-primary animate-spin mb-3" />
             <p className="text-muted-foreground font-medium">Fetching real-time tracking information...</p>
           </div>
         )}
 
         {error && !loading && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-2xl p-8 text-center">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-2xl p-6 md:p-8 text-center">
             <XCircle size={36} className="mx-auto mb-2 text-red-500" />
             <h3 className="text-lg font-serif mb-1">Order Not Found</h3>
             <p className="text-sm">{error}</p>
@@ -239,7 +239,7 @@ function Track() {
         )}
 
         {order && !loading && (
-          <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm">
             <div className="flex justify-between items-start mb-8 pb-6 border-b border-border flex-wrap gap-4">
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">Order #{order.orderId || order.id}</p>
@@ -277,13 +277,13 @@ function Track() {
                   <>
                     <XCircle size={32} className="mx-auto text-red-500 mb-2" />
                     <h4 className="text-base font-semibold text-red-700">Order Cancelled</h4>
-                    <p className="text-sm text-red-600/90 mt-1">This order has been cancelled and will not be delivered.</p>
+                    <p className="text-sm text-red-600 mt-1">This order has been cancelled and will not be delivered.</p>
                   </>
                 ) : (
                   <>
                     <AlertTriangle size={32} className="mx-auto text-amber-500 mb-2" />
                     <h4 className="text-base font-semibold text-amber-700">Cancellation Requested</h4>
-                    <p className="text-sm text-amber-600/90 mt-1">Your cancellation request is being processed by our support team.</p>
+                    <p className="text-sm text-amber-600 mt-1">Your cancellation request is being processed by our support team.</p>
                   </>
                 )}
               </div>
@@ -317,7 +317,7 @@ function Track() {
         )}
 
         {!hasSearched && (
-          <div className="bg-card border border-border rounded-2xl p-8 text-center text-muted-foreground">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 text-center text-muted-foreground">
             <Package size={40} className="mx-auto mb-3 text-muted-foreground/60" />
             <p className="text-sm">Enter your Order ID (from your confirmation email or Profile → Orders) above to track its live status.</p>
           </div>

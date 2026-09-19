@@ -4,6 +4,7 @@ import { AuthProvider } from "./auth";
 import { CartProvider } from "./cart";
 import { WishlistProvider } from "./wishlist";
 import { OrdersProvider } from "./orders";
+import { ReviewsProvider } from "./reviews";
 import { ProductsProvider } from "../products-store";
 import { CmsProvider } from "../cms-store";
 import { SettingsProvider } from "./settings-store";
@@ -16,11 +17,13 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       <CmsProvider>
         <SettingsProvider>
           <AuthProvider>
-            <WishlistProvider>
-              <CartProvider>
-                <OrdersProvider>{children}</OrdersProvider>
-              </CartProvider>
-            </WishlistProvider>
+            <ReviewsProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <OrdersProvider>{children}</OrdersProvider>
+                </CartProvider>
+              </WishlistProvider>
+            </ReviewsProvider>
           </AuthProvider>
         </SettingsProvider>
       </CmsProvider>
@@ -42,6 +45,7 @@ export * from "./auth";
 export * from "./cart";
 export * from "./wishlist";
 export * from "./orders";
+export * from "./reviews";
 export * from "./protected";
 export * from "../products-store";
 export * from "../cms-store";

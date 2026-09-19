@@ -1,7 +1,7 @@
 import * as React from "react";
 import { readJSON, writeJSON, removeKey } from "@/lib/storage";
 
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = "/api/auth";
 
 export type User = {
   id: string;

@@ -7,6 +7,7 @@
   UserX,
   Loader2,
   X,
+  Plus,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { customersAPI } from "../services/cms-api";
@@ -76,6 +77,14 @@ export function Customers() {
           <h1>Customers</h1>
           <p>Manage House of Phones customers and their activity.</p>
         </div>
+        <button
+          type="button"
+          className="primary-button"
+          aria-label="Add Customer"
+          onClick={() => alert("Customer creation will be available soon.")}
+        >
+          <Plus size={17} /> Add Customer
+        </button>
       </div>
 
       {/* Stats */}
@@ -182,7 +191,8 @@ export function Customers() {
                     <div className="customer-actions">
                       <button
                         className="customer-action-btn"
-                        title="View Details"
+                        aria-label="View Customer"
+                        title="View Customer"
                         onClick={() => {
                           setSelectedCustomer(customer);
                           setShowModal(true);
@@ -193,7 +203,8 @@ export function Customers() {
                       {customer.status === "Blocked" ? (
                         <button
                           className="customer-action-btn"
-                          title="Unblock"
+                          aria-label="Unblock Customer"
+                          title="Unblock Customer"
                           onClick={() => handleStatusToggle(customer)}
                         >
                           <UserCheck size={16} />
@@ -201,7 +212,8 @@ export function Customers() {
                       ) : (
                         <button
                           className="customer-action-btn"
-                          title="Block"
+                          aria-label="Block Customer"
+                          title="Block Customer"
                           onClick={() => handleStatusToggle(customer)}
                         >
                           <UserX size={16} />

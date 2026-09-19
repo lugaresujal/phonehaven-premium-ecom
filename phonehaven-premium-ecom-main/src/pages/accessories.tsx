@@ -65,17 +65,17 @@ function Accessories() {
   return (
     <PageLayout bare>
       {/* Hero Banner */}
-      <section className="relative aspect-[16/9] md:h-[320px] md:aspect-auto overflow-hidden">
+      <section className="relative inner-banner md:h-[320px] md:aspect-auto overflow-hidden">
         <img
           src={innerBanner}
           alt="Accessories Banner"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40" />
-        <div className="container-hop relative z-10 flex h-full flex-col justify-center text-white">
-          <p className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/80">Premium Collection</p>
+        <div className="container-hop relative z-10 flex h-full flex-col justify-center text-primary-foreground">
+          <p className="text-xs md:text-sm tracking-[0.3em] text-primary-foreground/80">Premium Collection</p>
           <h1 className="mt-2 md:mt-3 font-serif text-3xl sm:text-4xl md:text-6xl">{getCategoryDisplayName()}</h1>
-          <p className="mt-2 md:mt-4 max-w-2xl text-sm md:text-lg text-white/90">
+          <p className="mt-2 md:mt-4 max-w-2xl text-sm md:text-lg text-primary-foreground/90">
             {selectedCategory
               ? `Explore our premium collection of ${selectedCategory.toLowerCase()}`
               : "Everything you need to elevate your device."}
@@ -89,7 +89,7 @@ function Accessories() {
         <div className="flex gap-2 mb-6 md:mb-8 overflow-x-auto pb-2 -mx-5 px-5 md:mx-0 md:px-0 md:flex-wrap md:overflow-x-visible scrollbar-hide">
           <span
             onClick={() => handleCategorySelect(null)}
-            className={`shrink-0 px-4 py-1.5 rounded-full border text-xs uppercase tracking-widest cursor-pointer transition-colors ${
+            className={`shrink-0 px-4 py-1.5 rounded-full border text-xs tracking-widest cursor-pointer transition-colors ${
               selectedCategory === null
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border text-muted-foreground hover:border-primary hover:text-primary"
@@ -101,7 +101,7 @@ function Accessories() {
             <span
               key={t}
               onClick={() => handleCategorySelect(t)}
-              className={`shrink-0 px-4 py-1.5 rounded-full border text-xs uppercase tracking-widest cursor-pointer transition-colors ${
+              className={`shrink-0 px-4 py-1.5 rounded-full border text-xs tracking-widest cursor-pointer transition-colors ${
                 selectedCategory === t
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border text-muted-foreground hover:border-primary hover:text-primary"
@@ -113,7 +113,7 @@ function Accessories() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {filteredAccessories.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -124,7 +124,7 @@ function Accessories() {
             <p className="text-muted-foreground">No products found in this category.</p>
             <button
               onClick={() => handleCategorySelect(null)}
-              className="mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+              className="mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-primary text-primary text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
             >
               View All Accessories
             </button>

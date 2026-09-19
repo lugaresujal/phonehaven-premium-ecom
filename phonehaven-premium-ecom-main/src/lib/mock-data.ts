@@ -1,5 +1,25 @@
+export type ColorVariant = {
+  id?: string;
+  productId?: string;
+  colorName: string;
+  colorCode?: string | null;
+  images: string[];
+  stock?: number;
+  sortOrder?: number;
+};
+
+export type ProductVariant = {
+  ram?: string;
+  storage?: string;
+  color?: string;
+  price: number;
+  mrp: number;
+  stock: number;
+};
+
 export type Product = {
   id: string;
+  dbId?: string;
   slug: string;
   name: string;
   brand: string;
@@ -10,6 +30,8 @@ export type Product = {
   image: string;
   images?: string[];
   colors?: string[];
+  colorVariants?: ColorVariant[];
+  variants?: ProductVariant[];
   storage?: string[];
   ram?: string;
   rating: number;
@@ -23,6 +45,7 @@ export type Product = {
   stock: number;
   /** Legacy alias for mrp used by some page-local datasets. */
   originalPrice?: number;
+  shortDescription?: string;
   description?: string;
   specs?: string;
   specifications?: Record<string, string>;
@@ -32,7 +55,7 @@ import { catalogAccessories, coverProducts } from "./accessories-catalog";
 
 
 const img = (q: string, seed: number) =>
-  `https://images.unsplash.com/photo-${q}?auto=format&fit=crop&w=800&q=80&sig=${seed}`;
+  `https://images.unsplash.com/photo-${q}?auto=format&fit=crop&w=1200&q=90&sig=${seed}`;
 
 // Use curated Unsplash photo IDs for phones/accessories
 const P = [
@@ -51,9 +74,10 @@ const P = [
   "1600298881974-0bed040f5fe3", // iphone box
   "1591713283497-0e35f537afa7", // watch wrist
   "1586953208448-b95a79798f07", // airpods
-  "1583394838336-acd977736f90", // headphones
-  "1616400619175-5beda3a17896", // galaxy
   "1629131726695-1cfa1b164a39", // android phone
+  "1616400619175-5beda3a17896", // galaxy
+  "1583394838336-acd977736f90", // headphones
+  "1586953208448-b95a79798f07", // airpods
 ];
 
 export const brands = [
@@ -119,9 +143,9 @@ export const products: Product[] = phoneNames.map(([name, brand, price, mrp], i)
   mrp,
   image: img(P[i % P.length], i),
   images: [img(P[i % P.length], i), img(P[(i + 1) % P.length], i + 100), img(P[(i + 2) % P.length], i + 200)],
-  colors: ["Titanium Black", "Natural", "Desert", "White"],
-  storage: ["128GB", "256GB", "512GB"],
-  ram: "8GB",
+  colors: [],
+  storage: [],
+  ram: undefined,
   rating: Math.round((4.3 + (i % 7) * 0.1) * 10) / 10,
   reviews: 120 + i * 37,
   tags: i < 4 ? ["new-arrival"] : i < 9 ? ["best-seller"] : ["trending"],

@@ -128,7 +128,7 @@ function ContactPage() {
   return (
     <PageLayout>
       {/* Hero Banner */}
-      <section className="relative h-[220px] md:h-[360px] overflow-hidden">
+      <section className="relative inner-banner md:h-[360px] overflow-hidden">
         <img
           src={innerBanner}
           alt="Contact Us"
@@ -142,24 +142,24 @@ function ContactPage() {
             Contact Us
           </p>
 
-          <h1 className="mt-3 font-serif text-5xl md:text-6xl">
+          <h1 className="mt-3 font-serif text-3xl md:text-6xl">
             Get in Touch
           </h1>
 
-          <p className="mt-4 max-w-2xl text-lg text-white/90">
+          <p className="mt-2 md:mt-4 max-w-2xl text-sm md:text-lg text-white/80">
             We'd love to hear from you.
           </p>
         </div>
       </section>
 
       {/* Contact Section - Changed order for mobile */}
-      <section className="container-hop py-10">
-        <div className="grid lg:grid-cols-2 gap-10">
+      <section className="container-hop py-6 md:py-10">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-10">
           {/* Contact Form - First on mobile, second on desktop */}
           <div className="order-1 lg:order-2">
             <form
               onSubmit={handleSubmit}
-              className="bg-card border border-border rounded-3xl p-8 space-y-4"
+              className="bg-card border border-border rounded-3xl p-5 md:p-8 space-y-4"
             >
               <input
                 type="text"
@@ -238,7 +238,7 @@ function ContactPage() {
 
               {/* Error Message */}
               {error && (
-                <div className="rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-3 text-sm">
+                <div className="rounded-xl bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 text-sm">
                   {error}
                 </div>
               )}
@@ -246,7 +246,7 @@ function ContactPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-full bg-foreground text-background text-sm tracking-widest uppercase hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-full bg-primary text-primary-foreground text-sm tracking-widest uppercase hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   "Sending..."
@@ -303,11 +303,6 @@ function ContactPage() {
                 <div>
                   <p className="font-medium flex items-center gap-2">
                     {c.t}
-                    {c.t === "WhatsApp" && (
-                      <span className="text-xs bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full font-normal">
-                        Click to Redirect
-                      </span>
-                    )}
                   </p>
 
                   <p className="text-sm text-muted-foreground mt-1">
@@ -321,7 +316,7 @@ function ContactPage() {
       </section>
 
       {/* Google Map */}
-      <section className="container-hop pb-16">
+      <section className="container-hop pb-10 md:pb-16">
         <div
           id="map"
           className="rounded-3xl overflow-hidden bg-card border border-border shadow-sm"

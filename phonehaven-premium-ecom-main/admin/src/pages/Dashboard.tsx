@@ -275,6 +275,7 @@ export function Dashboard() {
             className="db-refresh-btn"
             onClick={fetchDashboard}
             disabled={loading}
+            aria-label="Refresh dashboard"
           >
             <RefreshCw size={16} className={loading ? "spin" : ""} />
             {loading ? "Refreshing..." : "Refresh"}
@@ -403,6 +404,7 @@ export function Dashboard() {
             <h2 className="db-panel-title">Order Status</h2>
             <Link to="/orders" className="db-panel-link">
               <Eye size={16} />
+              <span>View All</span>
             </Link>
           </div>
           <div className="db-panel-body chart-body">
@@ -500,6 +502,7 @@ export function Dashboard() {
             <h2 className="db-panel-title">Recent Orders</h2>
             <Link to="/orders" className="db-panel-link">
               <Eye size={16} />
+              <span>View All</span>
             </Link>
           </div>
           <div className="db-panel-body">

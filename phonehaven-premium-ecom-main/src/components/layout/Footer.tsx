@@ -64,7 +64,7 @@ export function Footer() {
     <footer className="bg-foreground text-background">
       {/* Newsletter */}
       <div className="border-b border-background/10">
-        <div className="container-hop py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="container-hop py-12 flex flex-col md:flex-row items-center justify-start gap-6 md:gap-10">
           <div>
             <p className="font-serif text-2xl md:text-3xl text-brand-light">Stay in the loop</p>
             <p className="text-sm text-background/70 mt-1">Be the first to hear about flagship launches, exclusive drops &amp; offers.</p>
@@ -80,11 +80,11 @@ export function Footer() {
               type="email"
               placeholder="Enter your email"
               required
-              className="px-4 py-2.5 rounded-full bg-background/10 border border-background/20 text-background placeholder:text-background/50 text-sm focus:outline-none focus:border-brand-light flex-1 min-w-0"
+              className="px-4 py-2.5 rounded-full bg-background/15 border border-background/30 text-background placeholder:text-background/50 text-sm focus:outline-none focus:border-brand-light flex-1 min-w-0"
             />
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-full bg-brand-light text-foreground text-xs uppercase tracking-widest font-semibold hover:bg-brand-light/90 transition-colors shrink-0"
+              className="px-4 md:px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-xs uppercase tracking-widest font-semibold hover:bg-primary/90 transition-colors shrink-0"
             >
               Subscribe
             </button>
@@ -93,9 +93,9 @@ export function Footer() {
       </div>
 
       {/* Columns */}
-      <div className="container-hop py-14 grid gap-10 md:grid-cols-[1.2fr_1fr_1fr_1fr_1.2fr]">
+      <div className="container-hop py-10 md:py-14 grid gap-8 md:gap-10 grid-cols-1 md:grid-cols-[1fr_1fr_1fr_1fr_1fr]">
         <div>
-          <div className="md:-ml-12 -ml-4">
+          <div className="[&_img]:mix-blend-screen">
             <Logo />
           </div>
           <p className="mt-5 text-sm text-background/70 leading-relaxed max-w-xs">
@@ -111,7 +111,7 @@ export function Footer() {
             <a href={youtubeUrl} target="_blank" rel="noopener noreferrer" title="YouTube" className="w-9 h-9 grid place-items-center rounded-full border border-background/20 hover:border-brand-light hover:text-brand-light transition-colors">
               <Youtube size={15} />
             </a>
-            <a href={`https://wa.me/${cleanWaNumber}?text=${encodeURIComponent(`Hi ${storeName}, I have an inquiry.`)}`} target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp" className="w-9 h-9 grid place-items-center rounded-full border border-background/20 bg-green-600/20 text-green-400 hover:bg-green-600 hover:text-white transition-colors">
+            <a href={`https://wa.me/${cleanWaNumber}?text=${encodeURIComponent(`Hi ${storeName}, I have an inquiry.`)}`} target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp" className="w-9 h-9 grid place-items-center rounded-full border border-background/20 hover:border-brand-light hover:text-brand-light transition-colors">
               <MessageCircle size={15} />
             </a>
           </div>
@@ -119,8 +119,8 @@ export function Footer() {
 
         {cols.map((c) => (
           <div key={c.title}>
-            <p className="text-[13px] uppercase tracking-[0.22em] text-brand-light mb-4">{c.title}</p>
-            <ul className="space-y-2.5 text-sm text-background/75">
+            <p className="text-[13px] tracking-[0.22em] text-brand-light mb-4">{c.title}</p>
+            <ul className="space-y-2.5 text-sm text-background/70">
               {c.links.map((l) => (
                 <li key={l.to}><Link to={l.to} className="hover:text-brand-light transition-colors">{l.label}</Link></li>
               ))}
@@ -155,7 +155,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-background/10">
-        <div className="container-hop py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-background/60">
+        <div className="container-hop py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-background/70">
           <p>© {new Date().getFullYear()} {storeName}. All Rights Reserved.</p>
           <p>Crafted with care in {city}, {country}.</p>
         </div>

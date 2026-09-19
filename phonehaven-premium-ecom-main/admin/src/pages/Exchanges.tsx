@@ -192,7 +192,8 @@ export function Exchanges() {
                     <div className="exchange-actions">
                       <button
                         className="exchange-action-btn"
-                        title="View"
+                        aria-label="View Exchange"
+                        title="View Exchange"
                         onClick={() => {
                           setSelectedExchange(exchange);
                           setShowModal(true);
@@ -203,7 +204,8 @@ export function Exchanges() {
                       {exchange.status !== "Approved" && exchange.status !== "Replacement Sent" && (
                         <button
                           className="exchange-action-btn"
-                          title="Approve"
+                          aria-label="Approve Exchange"
+                          title="Approve Exchange"
                           onClick={() => handleStatusUpdate(exchange.id, "Approved")}
                         >
                           <CheckCircle size={16} />
@@ -212,6 +214,7 @@ export function Exchanges() {
                       {exchange.status === "Approved" && (
                         <button
                           className="exchange-action-btn"
+                          aria-label="Mark Replacement Sent"
                           title="Mark Replacement Sent"
                           onClick={() => handleStatusUpdate(exchange.id, "Replacement Sent")}
                         >
@@ -221,7 +224,8 @@ export function Exchanges() {
                       {exchange.status !== "Rejected" && (
                         <button
                           className="exchange-action-btn"
-                          title="Reject"
+                          aria-label="Reject Exchange"
+                          title="Reject Exchange"
                           onClick={() => handleStatusUpdate(exchange.id, "Rejected")}
                         >
                           <XCircle size={16} />
